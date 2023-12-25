@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "mikestead.dotenv",
+    "editorconfig.editorconfig",
+    "dsznajder.es7-react-js-snippets",
+    "antfu.unocss",
+    "antfu.iconify",
+    "mrmlnc.vscode-scss",
+    "lokalise.i18n-ally"
+  ]
+}

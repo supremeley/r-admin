@@ -1,0 +1,17 @@
+.header {
+  box-sizing: border-box;
+  height: 10px;
+
+  // background-color: adjust-color(
+  //   $color: #000,
+  //   $red: 1,
+  //   $green: 2,
+  //   $blue: 3,
+  //   $hue: 0,
+  //   $saturation: 0%,
+  //   $lightness: 0%,
+  //   $alpha: 1
+  // );
+  border-color: red;
+  border-style: dashed;
+}
