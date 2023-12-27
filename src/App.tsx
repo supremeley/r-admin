@@ -9,7 +9,7 @@ import { Suspense } from 'react';
 import { Provider } from 'react-redux';
 
 function App() {
-  // const t = store.getState();
+  // const t = store.getState('123');
 
   return (
     <Provider store={store}>

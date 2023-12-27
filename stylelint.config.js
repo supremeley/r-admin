@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   extends: [
     'stylelint-config-recess-order',
     'stylelint-config-standard',
@@ -10,4 +10,5 @@ module.exports = {
   rules: {},
   plugins: ['stylelint-scss'],
   customSyntax: 'postcss-scss',
+  ignoreFiles: ['**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts'],
 };
