@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint:eslint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "lint:stylelint": "stylelint src/**/*.{css,scss,vue} --cache --fix",
-    "lint:prettier": "prettier -c --write \"src/**/*\"",
+    "lint:eslint": "eslint ./src --fix --ext .js,.ts,.tsx --report-unused-disable-directives --cache --max-warnings 0",
+    "lint:prettier": "prettier \"src/**/*\" -c --write --loglevel warn",
+    "lint:stylelint": "stylelint src/**/*.{css,scss,less} --fix --cache --cache-location node_modules/.cache/stylelint/",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -63,5 +63,10 @@
     "vite-plugin-imagemin": "^0.6.1",
     "vite-plugin-mock": "^3.0.0",
     "vite-plugin-pages": "^0.32.0"
+  },
+  "packageManager": "pnpm@8.0.0",
+  "engines": {
+    "node": ">=16.0.0",
+    "pnpm": ">=8.0.0"
   }
 }

@@ -43,6 +43,7 @@ export default [
     'eslint-plugin-simple-import-sort',
   ),
   {
+    // files: ["./src/","./types/","./config/"],
     ignores: ['*.config.js'],
     languageOptions: {
       ecmaVersion: 'latest',

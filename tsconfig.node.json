@@ -5,7 +5,11 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types",
+    ]
   },
-  "include": ["*.config.ts", "*.config.js"]
+  "include": ["*.config.ts", "*.config.js", "config/"]
 }

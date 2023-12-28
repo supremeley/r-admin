@@ -40,6 +40,10 @@ interface RouterItem {
 const LayoutMenu = () => {
   const [collapse, setCollapse] = useState(false);
 
+  const switchCollapse = () => {
+    setCollapse(!collapse);
+  };
+
   return (
     <div className='menu-demo'>
       {/* <Button
@@ -60,6 +64,7 @@ const LayoutMenu = () => {
         theme='dark'
         mode='pop'
         collapse={collapse}
+        onCollapseChange={switchCollapse}
         // defaultOpenKeys={['0']}
         // defaultSelectedKeys={['0_2']}
       >
