@@ -19,7 +19,7 @@ interface Options {
   enableAnalyze?: boolean;
 }
 
-export const createPlugins = ({ isUseSWC, isBuild, enableAnalyze, enableMock }: Options): PluginOption[] => {
+export const createPlugins = ({ isUseSWC, isBuild, enableAnalyze }: Options): PluginOption[] => {
   const plugins: (PluginOption | PluginOption[])[] = [
     UnoCSS({ configFile: './uni.config.ts' }),
     isUseSWC ? reactBySWC() : reactByBabel(),

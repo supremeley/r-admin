@@ -14,14 +14,15 @@ import { createPlugins } from './config/plugins';
 export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => {
   const root = process.cwd();
   const isBuild = command === 'build';
-  const { VITE_APP_PORT, VITE_APP_OPEN_BROWSER, VITE_APP_USE_SWC, VITE_APP_ENABLE_ANALYZE, VITE_APP_USE_MOCK } =
-    loadEnv(mode, root);
+  // const a: A = '123';
+
+  const env = loadEnv(mode, root) as Record<keyof ImportMetaEnvVar, string>;
 
   const plugins = createPlugins({
     isBuild,
-    isUseSWC: Boolean(VITE_APP_USE_SWC),
-    enableAnalyze: Boolean(VITE_APP_ENABLE_ANALYZE),
-    enableMock: Boolean(VITE_APP_USE_MOCK),
+    isUseSWC: Boolean(env.VITE_APP_USE_SWC),
+    enableAnalyze: Boolean(env.VITE_APP_ENABLE_ANALYZE),
+    enableMock: Boolean(env.VITE_APP_USE_MOCK),
   });
 
   return {
@@ -59,8 +60,8 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => {
     // server config
     server: {
       host: '0.0.0.0', // 服务器主机名，如果允许外部访问，可设置为"0.0.0.0"
-      port: Number(VITE_APP_PORT),
-      open: VITE_APP_OPEN_BROWSER,
+      port: Number(env.VITE_APP_PORT),
+      open: env.VITE_APP_OPEN_BROWSER,
       cors: true,
       // https: false,
       // 代理跨域（mock 不需要配置，这里只是个事列）
