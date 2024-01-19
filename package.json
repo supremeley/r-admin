@@ -6,15 +6,17 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint:eslint": "eslint \"src/**/*.{js,ts,tsx}\" --fix --cache --report-unused-disable-directives --max-warnings 10",
+    "lint:eslint": "eslint \"src/**/*.{js,ts,tsx}\" --fix --cache --cache-location node_modules/.cache/eslint/ --report-unused-disable-directives --max-warnings 10",
     "lint:prettier": "prettier \"src/**/*\" --check --write --cache --log-level warn",
-    "lint:stylelint": "stylelint \"src/**/*.{css,scss,less}\" --fix --cache",
-    "preview": "vite preview"
+    "lint:stylelint": "stylelint \"src/**/*.{css,scss,less}\" --fix --cache --cache-location node_modules/.cache/stylelint/",
+    "preview": "vite preview",
+    "visualizer": "vite visualizer"
   },
   "dependencies": {
     "@arco-design/web-react": "^2.57.2",
     "@arco-plugins/vite-react": "^1.3.3",
     "@reduxjs/toolkit": "^2.0.1",
+    "classnames": "^2.5.1",
     "localforage": "^1.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -64,7 +66,6 @@
     "vite-plugin-mock": "^3.0.0",
     "vite-plugin-pages": "^0.32.0"
   },
-  "packageManager": "pnpm@8.12.0",
   "engines": {
     "node": ">=16.0.0",
     "pnpm": ">=8.0.0"

@@ -14,7 +14,6 @@ import { createPlugins } from './config/plugins';
 export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => {
   const root = process.cwd();
   const isBuild = command === 'build';
-  // const a: A = '123';
 
   const env = loadEnv(mode, root) as Record<keyof ImportMetaEnvVar, string>;
 

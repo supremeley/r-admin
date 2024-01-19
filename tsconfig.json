@@ -2,7 +2,11 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "skipLibCheck": true,
     /* Bundler mode */
@@ -19,24 +23,55 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@assets/*": ["src/assets/*"],
-      "@components/*": ["src/components/*"],
-      "@constants/*": ["src/constants/*"],
-      "@layout/*": ["src/layout/*"],
-      "@router/*": ["src/router/*"],
-      "@services/*": ["src/services/*"],
-      "@store/*": ["src/store/*"],
-      "@utils/*": ["src/utils/*"],
-      "@views/*": ["src/views/*"],
-      "@/*": ["src/*"],
-      "@menu/*": ["src/layout/menu/*"],
-      "@content/*": ["src/layout/content/*"],
-      "@login/*": ["src/views/login/*"],
-      "@hooks/*": ["src/hooks/*"]
+      "@assets/*": [
+        "src/assets/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@constants/*": [
+        "src/constants/*"
+      ],
+      "@layout/*": [
+        "src/layout/*"
+      ],
+      "@router/*": [
+        "src/router/*"
+      ],
+      "@services/*": [
+        "src/services/*"
+      ],
+      "@store/*": [
+        "src/store/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@views/*": [
+        "src/views/*"
+      ],
+      "@/*": [
+        "src/*"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
+      "@api/*": [
+        "src/api/*"
+      ],
+      "@LazyLoadComponent/*": [
+        "src/components/LazyLoadComponent/*"
+      ]
     }
   },
-  "include": ["src", "types", "config"],
-  "exclude": ["dist"],
+  "include": [
+    "src/**/*",
+    "config/**/*",
+    "types"
+  ],
+  "exclude": [
+    "dist"
+  ],
   "references": [
     {
       "path": "./tsconfig.node.json"

@@ -37,6 +37,8 @@
     "useParams": true,
     "useResolvedPath": true,
     "useRoutes": true,
-    "useSearchParams": true
+    "useSearchParams": true,
+    "default": true,
+    "classNames": true
   }
 }

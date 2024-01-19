@@ -1,103 +1,53 @@
 import './index.scss';
 
 import { Menu } from '@arco-design/web-react';
+import classNames from 'classnames';
+
+import { page, PageItem } from '../index.data.ts';
 
 const MenuItem = Menu.Item;
 const SubMenu = Menu.SubMenu;
 
-const router: RouterItem[] = [
-  {
-    title: 'home',
-    hasChildren: false,
-    path: '/home',
-  },
-  {
-    title: 'login',
-    hasChildren: true,
-    children: [
-      {
-        title: 'home',
-        hasChildren: false,
-        path: '/home',
-      },
-      {
-        title: 'login',
-        hasChildren: false,
-        path: '/login',
-      },
-    ],
-  },
-];
-
-interface RouterItem {
-  title: string;
-  path?: string;
-  hasChildren: boolean;
-  icon?: string;
-  children?: RouterItem[];
-}
-
-const LayoutMenu = () => {
-  const [collapse, setCollapse] = useState(false);
-
-  const switchCollapse = () => {
-    setCollapse(!collapse);
-  };
-
+const LayoutMenu = ({ collapse, onSwitchCollapse }: { collapse: boolean; onSwitchCollapse: () => void }) => {
   return (
-    <div className='menu-demo'>
-      {/* <Button
-        style={{
-          padding: '0 12px',
-          height: 30,
-          lineHeight: '30px',
-          marginBottom: 4,
-        }}
-        type='primary'
-        onClick={() => setCollapse(!collapse)}
-      >
-        {collapse ? <IconMenuUnfold /> : <IconMenuFold />}
-      </Button> */}
-      <Menu
-        // style={{ width: 200, borderRadius: 4 }}
-        hasCollapseButton
-        theme='dark'
-        mode='pop'
-        collapse={collapse}
-        onCollapseChange={switchCollapse}
-        // defaultOpenKeys={['0']}
-        // defaultSelectedKeys={['0_2']}
-      >
-        <LayoutMenuItem page={router}></LayoutMenuItem>
-      </Menu>
-    </div>
+    <Menu
+      hasCollapseButton
+      accordion={true}
+      collapse={collapse}
+      style={{ borderRadius: 4 }}
+      theme='light'
+      className='menu'
+      onCollapseChange={onSwitchCollapse}
+    >
+      <LayoutMenuItem page={page} collapse={collapse}></LayoutMenuItem>
+    </Menu>
   );
 };
 
-const LayoutMenuItem = ({ page }: { page: RouterItem[] }) => {
-  const navigate = useNavigate();
-
-  const handleClick = (page: RouterItem) => {
+const LayoutMenuItem = ({ page, collapse = false }: { page: PageItem[]; collapse?: boolean }) => {
+  const handleClick = (page: PageItem) => {
     navigate(page.path!);
   };
+
+  const navigate = useNavigate();
 
   return page.map((item) => {
     return item.children?.length ? (
       <SubMenu
         key={item.title}
         title={
-          <>
-            <div className='r-ph-anchor-simple-thin' />
-            {item.title}
-          </>
+          <div className='menu-option'>
+            {item.icon && <div className={classNames('font-size-4', item.icon, { 'mr-2': !collapse })} />}
+            {!collapse && item.title}
+          </div>
         }
       >
-        <LayoutMenuItem page={item.children}></LayoutMenuItem>
+        <LayoutMenuItem page={item.children} collapse={collapse}></LayoutMenuItem>
       </SubMenu>
     ) : (
-      <MenuItem key={item.title} onClick={() => handleClick(item)}>
-        <div className='r-logos-vue text-3xl' />
-        {item.title}
+      <MenuItem key={item.title} className='menu-option' onClick={handleClick}>
+        {item.icon && <div className={classNames('font-size-4', item.icon, { 'mr-2': !collapse })} />}
+        {!collapse && item.title}
       </MenuItem>
     );
   });

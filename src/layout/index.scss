@@ -1,28 +1,17 @@
-.layout-basic-demo .arco-layout-header,
-.layout-basic-demo .arco-layout-footer,
-.layout-basic-demo .arco-layout-sider,
-.layout-basic-demo .arco-layout-sider-children,
-.layout-basic-demo .arco-layout-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.layout {
   font-size: 16px;
-  font-stretch: condensed;
-  color: var(--color-white);
   text-align: center;
-}
+  background: rgb(var(--orange-9));
 
-.layout-basic-demo .arco-layout-header,
-.layout-basic-demo .arco-layout-footer {
-  height: 64px;
-  background-color: var(--color-primary-light-4);
-}
+  --layout-header-height: 64px;
 
-.layout-basic-demo .arco-layout-sider {
-  width: 206px;
-  background-color: var(--color-primary-light-3);
-}
+  &-aside {
+    height: 100vh;
+  }
 
-.layout-basic-demo .arco-layout-content {
-  background-color: rgb(var(--arcoblue-6));
+  &-header,
+  &-footer {
+    height: var(--layout-header-height);
+    background-color: var(--color-primary-light-4);
+  }
 }

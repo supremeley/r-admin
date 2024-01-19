@@ -1,20 +1,30 @@
-.header {
-  height: 120px;
-  background: rgb(128 32 32 / 60%);
-  border-color: red;
-  border-style: dashed;
+.menu {
+  height: 100%;
+  box-shadow: 0 0 1px rgb(0 0 0 / 30%);
 
-  .header {
-    height: 120px;
-    background: rgb(128 32 32 / 60%);
-    border-color: red;
-    border-style: dashed;
+  .menu-option {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    font-size: 20px;
+    line-height: 48px;
+  }
 
-    .header {
-      height: 120px;
-      background: rgb(128 32 32 / 60%);
-      border-color: red;
-      border-style: dashed;
+  .arco-menu-inline {
+    .arco-menu-inline-content {
+      padding-left: 1rem;
     }
+  }
+
+  .arco-menu-collapse-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+  }
+}
+
+.arco-menu.arco-menu-collapse {
+  .arco-menu-pop-header {
+    padding: 0 12px;
   }
 }

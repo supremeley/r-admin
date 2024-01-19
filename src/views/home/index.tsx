@@ -7,7 +7,7 @@ const Home = () => {
     <div className='home'>
       home
       <div>{textA}</div>
-      <button onClick={() => setText('ttttt')}></button>
+      <button onClick={() => setText('ttttt')}>submit</button>
     </div>
   );
 };

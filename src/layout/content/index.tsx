@@ -4,12 +4,9 @@ import { Outlet } from 'react-router-dom';
 
 const LayoutContent = () => {
   return (
-    <>
+    <section className='main'>
       <Outlet />
-      {/* <Suspense fallback={<p>Loading...</p>}>
-          <Test></Test>
-        </Suspense> */}
-    </>
+    </section>
   );
 };
 
