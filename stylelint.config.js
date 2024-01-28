@@ -7,8 +7,8 @@ export default {
     'stylelint-config-recommended-scss',
     'stylelint-prettier',
   ],
-  rules: {},
   plugins: ['stylelint-scss'],
   customSyntax: 'postcss-scss',
   ignoreFiles: ['**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts'],
+  rules: {},
 };

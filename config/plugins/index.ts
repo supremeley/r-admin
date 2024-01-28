@@ -32,7 +32,7 @@ export const createPlugins = ({ isUseSWC, isBuild, enableAnalyze }: Options): Pl
       style: 'css',
     }),
     AutoImport({
-      imports: ['react', 'react-router-dom', { classnames: ['default', 'classNames'] }],
+      imports: ['react', 'react-router-dom', { classnames: [['default', 'classNames']] }],
       dts: './types/auto-import.d.ts',
       eslintrc: {
         enabled: true, // Default `false`

@@ -43,7 +43,6 @@ export default [
     'eslint-plugin-simple-import-sort',
   ),
   {
-    // files: ["./src/","./types/","./config/"],
     ignores: ['*.config.js'],
     languageOptions: {
       ecmaVersion: 'latest',
@@ -60,14 +59,9 @@ export default [
       'import/first': 'error',
       'import/newline-after-import': 'error',
       'import/no-duplicates': 'error',
-      // 'import/order': [
-      //   'error',
-      //   {
-      //     groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'unknown', 'type'],
-      //   },
-      // ],
-      // "arrow-body-style": 0,
-      // "prefer-arrow-callback": 0,
+      '@typescript-eslint/no-unsafe-assignment': 0,
+      '@typescript-eslint/no-unsafe-call': 0,
+      '@typescript-eslint/no-unsafe-member-access': 0,
     },
   },
 ];

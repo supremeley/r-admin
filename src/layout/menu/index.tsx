@@ -1,7 +1,6 @@
 import './index.scss';
 
 import { Menu } from '@arco-design/web-react';
-import classNames from 'classnames';
 
 import { page, PageItem } from '../index.data.ts';
 
