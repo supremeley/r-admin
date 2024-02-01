@@ -3,7 +3,7 @@ import { defHttp } from '@/utils/http';
 import { LoginParams, LoginResponse } from './sys.type';
 
 enum Api {
-  Login = '/login',
+  Login = '/sys/login',
 }
 
 export const login = (params: LoginParams) => {

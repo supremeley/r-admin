@@ -52,6 +52,7 @@ export const routerHandler = (routes: RouteWithMetaObject[]): RouteWithMetaObjec
 
     return {
       ...item,
+      // name: item.id,
       children,
       // element: item.meta?.needLazyLoad ? LazyLoadComponent(item.element) : item.element,
     };

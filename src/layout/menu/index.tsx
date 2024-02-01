@@ -2,12 +2,21 @@ import './index.scss';
 
 import { Menu } from '@arco-design/web-react';
 
-import { page, PageItem } from '../index.data.ts';
+import { page } from '../index.data.ts';
+import type { PageItem } from '../index.type.ts';
 
 const MenuItem = Menu.Item;
 const SubMenu = Menu.SubMenu;
 
 const LayoutMenu = ({ collapse, onSwitchCollapse }: { collapse: boolean; onSwitchCollapse: () => void }) => {
+  const [selectedMenuIndex, setSelectedMenuIndex] = useState('');
+
+  const onClickMenu = (key: string) => {
+    console.log(key, 'key');
+
+    setSelectedMenuIndex(key);
+  };
+
   return (
     <Menu
       hasCollapseButton
@@ -16,6 +25,9 @@ const LayoutMenu = ({ collapse, onSwitchCollapse }: { collapse: boolean; onSwitc
       style={{ borderRadius: 4 }}
       theme='light'
       className='menu'
+      levelIndent={16}
+      selectedKeys={[selectedMenuIndex]}
+      onClickMenuItem={onClickMenu}
       onCollapseChange={onSwitchCollapse}
     >
       <LayoutMenuItem page={page} collapse={collapse}></LayoutMenuItem>
@@ -25,6 +37,7 @@ const LayoutMenu = ({ collapse, onSwitchCollapse }: { collapse: boolean; onSwitc
 
 const LayoutMenuItem = ({ page, collapse = false }: { page: PageItem[]; collapse?: boolean }) => {
   const handleClick = (page: PageItem) => {
+    console.log(page, 'page');
     navigate(page.path!);
   };
 
@@ -44,7 +57,7 @@ const LayoutMenuItem = ({ page, collapse = false }: { page: PageItem[]; collapse
         <LayoutMenuItem page={item.children} collapse={collapse}></LayoutMenuItem>
       </SubMenu>
     ) : (
-      <MenuItem key={item.title} className='menu-option' onClick={handleClick}>
+      <MenuItem key={item.title} className='menu-option' onClick={() => handleClick(item)}>
         {item.icon && <div className={classNames('font-size-4', item.icon, { 'mr-2': !collapse })} />}
         {!collapse && item.title}
       </MenuItem>

@@ -122,7 +122,7 @@ export class AxiosRequest {
 
   supportFormData(config: CreateAxiosOptions) {
     const headers = config.headers ?? this.options.headers;
-    const contentType = headers?.['Content-Type'] ?? headers?.['content-type'];
+    const contentType = (headers?.['Content-Type'] ?? headers?.['content-type']) as ContentTypeEnum;
 
     if (
       contentType !== ContentTypeEnum.FORM_URLENCODED ||

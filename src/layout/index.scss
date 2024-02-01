@@ -1,18 +1,26 @@
 .layout {
   font-size: 16px;
-  text-align: center;
+
+  // text-align: center;
 
   // background: rgb(var(--orange-9));
 
   --layout-header-height: 64px;
 
   &-aside {
-    height: 100vh;
+    height: calc(100vh - var(--layout-header-height));
+  }
+
+  &-content {
+    height: calc(100vh - var(--layout-header-height));
+    overflow: scroll;
   }
 
   &-header,
   &-footer {
     height: var(--layout-header-height);
-    background-color: var(--color-primary-light-4);
+    color: #000;
+
+    // background-color: var(--color-primary-light-4);
   }
 }

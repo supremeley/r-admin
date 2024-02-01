@@ -5,10 +5,12 @@ import { Navigate } from 'react-router-dom';
 
 const router: RouteWithMetaObject[] = [
   {
+    id: 'Root',
     path: '/',
     element: <Navigate to='/home' />,
   },
   {
+    id: 'Home',
     path: '/home',
     element: <Home />,
     meta: {
@@ -16,6 +18,15 @@ const router: RouteWithMetaObject[] = [
     },
   },
   {
+    id: 'User',
+    path: '/user',
+    element: LazyLoadComponent(lazy(() => import('@/views/user'))),
+    meta: {
+      title: '用户列表',
+    },
+  },
+  {
+    id: 'Login',
     path: 'login',
     element: LazyLoadComponent(lazy(() => import('@/views/login'))),
     meta: {

@@ -36,7 +36,7 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => {
           assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
           manualChunks: {
             react: ['react', 'react-dom', 'react-redux', 'react-router-dom'],
-            arco: ['@arco-design//web-react', '@arco-plugins/vite-react'],
+            arco: ['@arco-design/web-react', '@arco-plugins/vite-react'],
           },
         },
       },
@@ -66,9 +66,9 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => {
       // 代理跨域（mock 不需要配置，这里只是个事列）
       proxy: {
         '/api': {
-          target: 'http://localhost:3000', // easymock
+          target: 'http://localhost:8080', // easymock
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
+          rewrite: (path) => path.replace(/^\/api/, '/api'),
         },
       },
     },

@@ -17,22 +17,20 @@ const Layout = () => {
 
   return (
     <ArcoLayout className='layout'>
+      <Header className='layout-header'>
+        <LayoutHeader></LayoutHeader>
+      </Header>
       <ArcoLayout>
-        <Sider width={280} collapsed={collapse} className='layout-aside'>
+        <Sider width={240} collapsed={collapse} className='layout-aside'>
           <LayoutMenu collapse={collapse} onSwitchCollapse={switchCollapse}></LayoutMenu>
         </Sider>
-        <ArcoLayout>
-          <Header className='layout-header'>
-            <LayoutHeader></LayoutHeader>
-          </Header>
-          <Content className='layout-montent'>
-            <LayoutContent></LayoutContent>
-          </Content>
-        </ArcoLayout>
+        <Content className='layout-content'>
+          <LayoutContent></LayoutContent>
+          <Footer className='layout-footer'>
+            <section className='footer'>Footer</section>
+          </Footer>
+        </Content>
       </ArcoLayout>
-      <Footer className='layout-footer'>
-        <section className='footer'>Footer</section>
-      </Footer>
     </ArcoLayout>
   );
 };

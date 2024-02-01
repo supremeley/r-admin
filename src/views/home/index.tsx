@@ -1,6 +1,6 @@
 import './index.scss';
 
-import { login } from '@/api/sys/auth';
+// import { login } from '@/api/sys/auth';
 
 const Home = () => {
   const [textA, setText] = useState('test');
@@ -11,16 +11,15 @@ const Home = () => {
     //   const response = await MyAPI.getData(someId);
     //   // ...
     // }
-
-    void fetchData();
+    // void fetchData();
   });
 
-  const fetchData = async () => {
-    const res = await login({ password: '123', username: 'wawawa' });
+  // const fetchData = async () => {
+  //   const res = await login({ password: '123', username: 'test' });
 
-    console.log(res);
-    // setText(res.data.token);
-  };
+  //   console.log(res);
+  //   // setText(res.data.token);
+  // };
 
   return (
     <div className='home'>

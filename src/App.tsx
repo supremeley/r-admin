@@ -1,5 +1,5 @@
 import { ConfigProvider } from '@arco-design/web-react';
-import enUS from '@arco-design/web-react/es/locale/en-US';
+import zhCN from '@arco-design/web-react/es/locale/zh-CN';
 import Layout from '@layout/index';
 import { RouterWithoutLayout } from '@router/index';
 import { store } from '@store/index';
@@ -8,7 +8,7 @@ import { Provider } from 'react-redux';
 function App() {
   return (
     <Provider store={store}>
-      <ConfigProvider locale={enUS}>
+      <ConfigProvider locale={zhCN}>
         <RouterWithoutLayout>
           <Layout></Layout>
         </RouterWithoutLayout>

@@ -1,3 +1,4 @@
+// import presetAttributify from '@unocss/preset-attributify';
 import presetIcons from '@unocss/preset-icons';
 import { defineConfig, presetUno, UserConfig } from 'unocss';
 
@@ -19,9 +20,14 @@ export default defineConfig({
         'vertical-align': 'middle',
       },
     }),
+    // presetAttributify({
+    // prefix: 'un-',
+    // prefixedOnly: true,
+    // })
   ],
   shortcuts: {
     'flex-center': 'flex flex-justify-center flex-items-center',
+    'flex-top-center': 'flex flex-justify-center',
   },
   safelist: ['r-ph-anchor-simple-thin'],
 }) as UserConfig<never>;

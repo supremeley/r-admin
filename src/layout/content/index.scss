@@ -1,3 +1,6 @@
 .main {
-  height: calc(100vh - var(--layout-header-height));
+  box-sizing: border-box;
+  min-height: calc(100vh - var(--layout-header-height));
+
+  // overflow: scroll;
 }

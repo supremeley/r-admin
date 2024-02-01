@@ -29,7 +29,7 @@
     "titleBar.inactiveForeground": "#15202b99"
   },
   "peacock.color": "#61dafb",
-  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "typescript.tsdk": "node_modules/typescript/lib",
   "search.exclude": {
     "**/node_modules": true,
     "**/*.log": true,
@@ -41,6 +41,6 @@
     "**/.idea": true,
     "**/.vscode": false,
     "**/pnpm-lock.yaml": true,
-    "CHANGELOG.md": true,
-  },
+    "CHANGELOG.md": true
+  }
 }
