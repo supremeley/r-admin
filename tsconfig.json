@@ -3,7 +3,11 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "skipLibCheck": true,
     /* Bundler mode */
@@ -20,23 +24,66 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@assets/*": ["src/assets/*"],
-      "@components/*": ["src/components/*"],
-      "@constants/*": ["src/constants/*"],
-      "@layout/*": ["src/layout/*"],
-      "@router/*": ["src/router/*"],
-      "@store/*": ["src/store/*"],
-      "@utils/*": ["src/utils/*"],
-      "@views/*": ["src/views/*"],
-      "@/*": ["src/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@api/*": ["src/api/*"],
-      "@enums/*": ["src/enums/*"],
-      "@user/*": ["src/views/user/*"]
+      "@assets/*": [
+        "src/assets/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@constants/*": [
+        "src/constants/*"
+      ],
+      "@layout/*": [
+        "src/layout/*"
+      ],
+      "@router/*": [
+        "src/router/*"
+      ],
+      "@store/*": [
+        "src/store/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@views/*": [
+        "src/views/*"
+      ],
+      "@/*": [
+        "src/*"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
+      "@api/*": [
+        "src/api/*"
+      ],
+      "@enums/*": [
+        "src/enums/*"
+      ],
+      "@user/*": [
+        "src/views/user/*"
+      ],
+      "@services/*": [
+        "src/services/*"
+      ],
+      "@sys/*": [
+        "src/store/sys/*"
+      ],
+      "@auth/*": [
+        "src/store/auth/*"
+      ]
     }
   },
-  "include": ["src/**/*.js", "src/**/*.ts", "src/**/*.tsx", "config", "types"],
-  "exclude": ["dist"],
+  "include": [
+    "src/**/*.js",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "config",
+    "types"
+  ],
+  "exclude": [
+    "dist"
+  ],
   "references": [
     {
       "path": "./tsconfig.node.json"

@@ -1,6 +1,11 @@
 import './index.scss';
 
-import { Avatar, Dropdown, Menu, Switch } from '@arco-design/web-react';
+import { Avatar, Button, Dropdown, Menu, Switch } from '@arco-design/web-react';
+import { useSelector } from 'react-redux';
+
+// import { saveToken, saveUserinfo } from '@/store/auth';
+import { uselogin } from '@/hooks/useAuth';
+import type { RootState } from '@/store';
 
 const dropList = (
   <Menu>
@@ -11,7 +16,11 @@ const dropList = (
 );
 
 const LayoutHeader = () => {
-  //   const [textA, setText] = useState('test');
+  const auth = useSelector((state: RootState) => state.auth);
+  // console.log(auth);
+  const login = () => {
+    uselogin();
+  };
 
   return (
     <section className='header box-border flex flex-justify-end flex-items-center bg-brand-primary p-3'>
@@ -20,7 +29,9 @@ const LayoutHeader = () => {
         <Avatar className='hover'>
           <div className='r-logos-vue text-3xl'></div>
         </Avatar>
+        {auth?.userinfo?.username}
       </Dropdown>
+      <Button onClick={login}></Button>
     </section>
   );
 };

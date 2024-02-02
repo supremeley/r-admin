@@ -1,4 +1,4 @@
-import { defHttp } from '@/utils/http';
+import { defHttp } from '@/hooks/useAxios';
 
 import { LoginParams, LoginResponse } from './sys.type';
 

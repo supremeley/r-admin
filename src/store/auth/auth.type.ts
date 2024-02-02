@@ -3,7 +3,7 @@ export interface UserInfo {
   userID: string;
 }
 
-export interface UserState {
+export interface AuthState {
   userinfo: UserInfo | null;
   token: string | null;
 }
