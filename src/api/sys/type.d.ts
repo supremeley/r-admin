@@ -4,5 +4,9 @@ export interface LoginParams {
 }
 
 export interface LoginResponse {
-  message: string;
+  token: string;
+  userinfo: {
+    username: string;
+    userID: string;
+  };
 }

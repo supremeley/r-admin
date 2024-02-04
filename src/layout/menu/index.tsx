@@ -2,8 +2,8 @@ import './index.scss';
 
 import { Menu } from '@arco-design/web-react';
 
-import { page } from '../index.data.ts';
-import type { PageItem } from '../index.type.ts';
+import { page } from '../constants.ts';
+import type { PageItem } from '../type.d.ts';
 
 const MenuItem = Menu.Item;
 const SubMenu = Menu.SubMenu;

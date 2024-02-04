@@ -1,4 +1,4 @@
-import { PageItem } from './index.type';
+import type { PageItem } from './type';
 
 export const page: PageItem[] = [
   {
@@ -19,6 +19,7 @@ export const page: PageItem[] = [
     path: '/user',
     icon: 'r-ph-anchor-simple-thin',
   },
+
   // {
   //   title: 'login1',
   //   hasChildren: true,

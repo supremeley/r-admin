@@ -1,10 +1,10 @@
 import './index.scss';
 
-import { Avatar, Button, Dropdown, Menu, Switch } from '@arco-design/web-react';
+import { Avatar, Dropdown, Menu, Switch } from '@arco-design/web-react';
 import { useSelector } from 'react-redux';
 
 // import { saveToken, saveUserinfo } from '@/store/auth';
-import { uselogin } from '@/hooks/useAuth';
+// import { useLogin } from '@/hooks/useAuth';
 import type { RootState } from '@/store';
 
 const dropList = (
@@ -18,9 +18,9 @@ const dropList = (
 const LayoutHeader = () => {
   const auth = useSelector((state: RootState) => state.auth);
   // console.log(auth);
-  const login = () => {
-    uselogin();
-  };
+  // const login = () => {
+  // const [result] = useLogin({ username: '大哥', password: '123' });
+  // };
 
   return (
     <section className='header box-border flex flex-justify-end flex-items-center bg-brand-primary p-3'>
@@ -31,7 +31,7 @@ const LayoutHeader = () => {
         </Avatar>
         {auth?.userinfo?.username}
       </Dropdown>
-      <Button onClick={login}></Button>
+      {/* <Button onClick={login}></Button> */}
     </section>
   );
 };

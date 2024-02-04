@@ -1,37 +1,36 @@
-// import { useDispatch } from 'react-redux';
+import { useState } from 'react';
 
-// import type { RootState } from '@/store';
+import { login } from '@/api/sys/auth';
+import type { LoginParams } from '@/api/sys/type';
 import { store } from '@/store';
 import { saveToken, saveUserinfo } from '@/store/auth';
-// import { CacheTypeEnum, TOKEN_KEY } from '@/enums/cacheEnum';
-// import projectSetting from '@/settings/projectSetting';
-// import { BasicKeys, Persistent } from '@/utils/cache/persistent';
 
-// const { permissionCacheType } = projectSetting;
-// const isLocal = permissionCacheType === CacheTypeEnum.LOCAL;
-
-export function useGetToken() {
+export function getToken() {
   const auth = store.getState().auth;
 
   const { token } = auth;
 
   return [token];
-
-  // return getAuthCache(TOKEN_KEY);
 }
 
-export function uselogin() {
-  const userinfo = {
-    username: '大哥',
-    userID: '666',
-  };
-  const token = '1234';
+export const useLogin = async (params: LoginParams) => {
+  const [result, setResult] = useState({});
 
-  store.dispatch(saveUserinfo(userinfo));
-  store.dispatch(saveToken(token));
+  const { code, data } = await login(params);
 
-  return [userinfo, token];
-}
+  if (code !== 200) {
+    return [false];
+  } else {
+    const { token, userinfo } = data;
+
+    store.dispatch(saveUserinfo(userinfo));
+    store.dispatch(saveToken(token));
+
+    setResult(data);
+
+    return [result, setResult];
+  }
+};
 
 // export function getAuthCache<T>(key: BasicKeys) {
 //   const fn = isLocal ? Persistent.getLocal : Persistent.getSession;

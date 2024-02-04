@@ -49,7 +49,7 @@ const columns: TableColumnProps[] = [
     width: 320,
     fixed: 'right',
     dataIndex: 'operation',
-    render: (_, record) => (
+    render: () => (
       <Row gutter={10}>
         <Col span={6}>
           <Button type='primary'>编辑</Button>

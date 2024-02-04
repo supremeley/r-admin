@@ -20,7 +20,7 @@ import qs from 'qs';
 import { ContentTypeEnum, RequestEnum } from '@/enums/httpEnum';
 // import { TOKEN_KEY } from '/@/config';
 // import { useMessage } from '/@/hooks/web/useMessage';
-import { useGetToken } from '@/hooks/useAuth';
+import { getToken } from '@/hooks/useAuth';
 // import { joinTimestamp } from './helper';
 
 // const { notification } = useMessage();
@@ -144,7 +144,7 @@ export class AxiosRequest {
     const needToken = (config as CreateAxiosOptions).requestOptions!.needToken ?? options.requestOptions;
 
     if (needToken) {
-      const [token] = useGetToken();
+      const [token] = getToken();
       nHeaders.Authorization = token;
     }
 
