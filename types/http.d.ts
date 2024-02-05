@@ -1,7 +1,5 @@
 import type { AxiosRequestConfig } from 'axios';
 
-// import { ResultEnum } from '@/enums/httpEnum';
-
 declare global {
   interface CreateAxiosOptions extends AxiosRequestConfig {
     requestOptions?: RequestOptions;
@@ -14,11 +12,11 @@ declare global {
 
   interface ResponseData {
     message: string;
-    code: number;
+    code: ResponseCode;
   }
 
   interface SuccessResponse<T = unknown> extends ResponseData {
-    code: 200;
+    code: Omit<ResponseCode, ResponseFailCode>;
     result: T;
   }
 
@@ -34,4 +32,10 @@ declare global {
     hasNext: boolean;
     list: T[];
   }
+
+  type ResponseFailCode = 500;
+
+  type ResponseSuccessCode = 200;
+
+  type ResponseCode = ResponseSuccessCode | 401 | 403 | 404 | ResponseFailCode;
 }

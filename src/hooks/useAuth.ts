@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { login } from '@/api/sys/auth';
 import type { LoginParams } from '@/api/sys/interface';
+import { ResultEnum } from '@/enums/http';
 import { store } from '@/store';
 import { saveToken, saveUserinfo } from '@/store/auth';
 
@@ -18,7 +19,7 @@ export const useLogin = async (params: LoginParams) => {
 
   const { code, result } = await login(params);
 
-  if (code !== 200) {
+  if (code !== ResultEnum.SUCCESS) {
     return [false];
   } else {
     const { token, userinfo } = result;
@@ -28,7 +29,7 @@ export const useLogin = async (params: LoginParams) => {
 
     setUser(result);
 
-    return [user, setUser];
+    return [user];
   }
 };
 

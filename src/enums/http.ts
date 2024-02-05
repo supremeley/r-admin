@@ -3,10 +3,11 @@
  */
 export enum ResultEnum {
   SUCCESS = 200,
-  ERROR = -1,
+  FAIL = 500,
   TIMEOUT = 401,
-  TYPE = 'success',
 }
+
+export type ResultCode = typeof ResultEnum;
 
 /**
  * @description: request method

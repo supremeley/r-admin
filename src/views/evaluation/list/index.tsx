@@ -20,7 +20,7 @@ import {
 
 import { evaluation } from '@/api';
 import type { Evaluation } from '@/api/evaluation/interface';
-// import { ResultEnum } from '@/enums/httpEnum';
+import { ResultEnum } from '@/enums/http';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -129,7 +129,7 @@ const EvaluationList = () => {
     try {
       const { code, result } = await evaluation.getEvaluationList(params);
 
-      if (code === 200) {
+      if (code === ResultEnum.SUCCESS) {
         setList(result.list);
         setLoading(false);
       }
@@ -209,7 +209,7 @@ const EvaluationList = () => {
     try {
       const { code } = await api(params);
 
-      if (code === 200) {
+      if (code === ResultEnum.SUCCESS) {
         await fetchData();
 
         handleCloseModal();
