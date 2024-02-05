@@ -4,8 +4,8 @@ import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { encryptTransform } from 'redux-persist-transform-encrypt';
 
-import authReducer from './auth/index';
-import sysReducer from './sys/index';
+import authReducer from './auth';
+import sysReducer from './sys';
 
 const encryptor = encryptTransform({
   secretKey: 'test@key12',

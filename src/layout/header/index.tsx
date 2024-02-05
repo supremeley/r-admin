@@ -9,9 +9,8 @@ import type { RootState } from '@/store';
 
 const dropList = (
   <Menu>
-    <Menu.Item key='1'>Beijing</Menu.Item>
-    <Menu.Item key='2'>Shanghai</Menu.Item>
-    <Menu.Item key='3'>Guangzhou</Menu.Item>
+    <Menu.Item key='1'>用户信息</Menu.Item>
+    <Menu.Item key='2'>退出登录</Menu.Item>
   </Menu>
 );
 
@@ -23,15 +22,14 @@ const LayoutHeader = () => {
   // };
 
   return (
-    <section className='header box-border flex flex-justify-end flex-items-center bg-brand-primary p-3'>
-      <Switch className='mr-3' />
+    <section className='header p-4 pr-12'>
+      <Switch className='mr-4' />
       <Dropdown droplist={dropList} position='bl'>
-        <Avatar className='hover'>
+        <Avatar className='hover' size={32}>
           <div className='r-logos-vue text-3xl'></div>
         </Avatar>
-        {auth?.userinfo?.username}
+        <span className='ml-2 text-xl'>{auth?.userinfo?.username}</span>
       </Dropdown>
-      {/* <Button onClick={login}></Button> */}
     </section>
   );
 };

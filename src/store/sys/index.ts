@@ -1,7 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
-import type { Menu, SySState } from './type';
+import type { Menu, SySState } from './interface';
 
 const initialState: SySState = {
   menu: [],

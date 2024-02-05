@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { login } from '@/api/sys/auth';
-import type { LoginParams } from '@/api/sys/type';
+import type { LoginParams } from '@/api/sys/interface';
 import { store } from '@/store';
 import { saveToken, saveUserinfo } from '@/store/auth';
 
@@ -14,21 +14,21 @@ export function getToken() {
 }
 
 export const useLogin = async (params: LoginParams) => {
-  const [result, setResult] = useState({});
+  const [user, setUser] = useState({});
 
-  const { code, data } = await login(params);
+  const { code, result } = await login(params);
 
   if (code !== 200) {
     return [false];
   } else {
-    const { token, userinfo } = data;
+    const { token, userinfo } = result;
 
     store.dispatch(saveUserinfo(userinfo));
     store.dispatch(saveToken(token));
 
-    setResult(data);
+    setUser(result);
 
-    return [result, setResult];
+    return [user, setUser];
   }
 };
 

@@ -1,6 +1,6 @@
 import { useAxios } from '@/hooks/useAxios';
 
-import type { LoginParams, LoginResponse } from './type.d.ts';
+import type { LoginParams, LoginResponse } from './interface';
 
 enum Api {
   Login = '/sys/login',

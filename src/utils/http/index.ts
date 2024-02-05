@@ -17,7 +17,7 @@ import qs from 'qs';
 //   UploadFileCallBack,
 //   UploadFileParams,
 // } from '/#/request';
-import { ContentTypeEnum, RequestEnum } from '@/enums/httpEnum';
+import { ContentTypeEnum, RequestEnum } from '@/enums/http';
 // import { TOKEN_KEY } from '/@/config';
 // import { useMessage } from '/@/hooks/web/useMessage';
 import { getToken } from '@/hooks/useAuth';

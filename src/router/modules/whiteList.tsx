@@ -1,7 +1,7 @@
-import LazyLoadComponent from '@components/LazyLoadComponent';
-import Home from '@views/home';
-// import Login from '@views/login';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
+
+import LazyLoadComponent from '@/components/LazyLoadComponent';
+import Home from '@/views/home';
 
 const router: RouteWithMetaObject[] = [
   {
@@ -19,21 +19,33 @@ const router: RouteWithMetaObject[] = [
   },
   {
     id: 'User',
-    path: '/user',
-    element: LazyLoadComponent(lazy(() => import('@/views/user'))),
+    path: 'user',
+    element: <Outlet />,
     meta: {
       title: '用户列表',
     },
+    children: [
+      {
+        id: 'UserList',
+        path: 'list',
+        element: LazyLoadComponent(lazy(() => import('@/views/user/list/index'))),
+      },
+    ],
   },
   {
-    id: 'Login',
-    path: 'login',
-    element: LazyLoadComponent(lazy(() => import('@/views/login'))),
+    id: 'Evaluation',
+    path: 'evaluation',
+    element: <Outlet />,
     meta: {
-      title: '登录',
-      needLazyLoad: true,
+      title: '评测列表',
     },
-    // children: [...staticRoutes],
+    children: [
+      {
+        id: 'EvaluationList',
+        path: 'list',
+        element: LazyLoadComponent(lazy(() => import('@/views/evaluation/list/index'))),
+      },
+    ],
   },
 ];
 
