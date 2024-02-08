@@ -13,3 +13,8 @@ export const noLabelLayout = {
     offset: 7,
   },
 };
+
+export const pageDefaultConfig = {
+  page: 1,
+  limit: 10,
+};

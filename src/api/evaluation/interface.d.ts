@@ -18,3 +18,7 @@ export type EvaluationListResult = ListResult<Evaluation>;
 export type CreateEvaluation = Partial<Omit<Evaluation, 'id'>>;
 
 export type OperateEvaluationResult = Partial<Evaluation> & { id: number };
+
+export interface EvaluationFilter {
+  name: string;
+}

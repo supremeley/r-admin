@@ -9,7 +9,7 @@ import { store } from '@/store/index';
 
 const persistor = persistStore(store);
 
-function App() {
+const App = () => {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
@@ -19,6 +19,6 @@ function App() {
       </PersistGate>
     </Provider>
   );
-}
+};
 
 export default App;

@@ -2,6 +2,8 @@ import { createBrowserRouter } from 'react-router-dom';
 
 import Layout from '@/layout/index';
 
+import { useAuthRouter } from './useAuthRouter';
+
 const whiteListModules = import.meta.glob('./modules/!(errorList).tsx');
 const errorListModules = import.meta.glob('./modules/errorList.tsx');
 
@@ -20,12 +22,24 @@ for (const path in errorListModules) {
   errorList.push(...mod.default);
 }
 
-export const combinRoutes = () => {
+export const combinRoutes = (router: RouteWithMetaObject[]) => {
   return createBrowserRouter([
     {
-      element: <Layout />,
-      children: [...routerList],
+      id: 'Root',
+      path: '/',
+      loader: () => {
+        console.log('loader');
+        return false;
+        // return useAuthRouter();
+      },
+      element: <div>root</div>,
+      children: [
+        {
+          element: <Layout />,
+          children: [...routerList, ...router],
+        },
+        ...errorList,
+      ],
     },
-    ...errorList,
   ]);
 };

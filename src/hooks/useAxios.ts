@@ -1,7 +1,4 @@
 import { AxiosRequest } from '@utils/http';
-// import { useGlobSetting } from '/@/hooks/setting';
-
-// const globSetting = useGlobSetting();
 
 export function createAxios(opt?: Partial<AxiosRequest>) {
   return new AxiosRequest({

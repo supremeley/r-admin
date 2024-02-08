@@ -7,23 +7,25 @@ import {
   FormInstance,
   Grid,
   Input,
-  InputNumber,
+  // InputNumber,
   Message,
   Modal,
   PageHeader,
+  PaginationProps,
   Popconfirm,
-  Radio,
+  // Radio,
   Table,
   type TableColumnProps,
   Tooltip,
 } from '@arco-design/web-react';
+import { SorterInfo } from '@arco-design/web-react/es/Table/interface';
 
 import { evaluation } from '@/api';
-import type { Evaluation } from '@/api/evaluation/interface';
+import type { Evaluation, EvaluationFilter } from '@/api/evaluation/interface';
 import { ResultEnum } from '@/enums/http';
 
 const FormItem = Form.Item;
-const RadioGroup = Radio.Group;
+// const RadioGroup = Radio.Group;
 const Row = Grid.Row;
 const Col = Grid.Col;
 
@@ -111,35 +113,83 @@ const EvaluationList = () => {
     },
   ];
 
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
   const [loading, setLoading] = useState(false);
   const [list, setList] = useState<Evaluation[]>([]);
+  const [total, setTotal] = useState<number>(0);
 
   useEffect(() => {
-    void fetchData();
-  }, []);
+    console.log('useEffect');
+    void fetchData(page, limit);
+  }, [page, limit]);
 
-  const fetchData = async () => {
+  const searchFormRef = useRef<FormInstance<EvaluationFilter>>(null);
+  const [filter, setFilter] = useState<EvaluationFilter | null>(null);
+
+  useEffect(() => {
+    console.log('useEffect');
+    reloadData();
+  }, [filter]);
+
+  const reloadData = () => {
+    if (page === 1) {
+      void fetchData(page, limit);
+    } else {
+      setPage(1);
+    }
+  };
+
+  const handleReset = () => {
+    searchFormRef.current?.resetFields();
+  };
+
+  const handleSearch = async () => {
+    if (searchFormRef.current) {
+      try {
+        const res = await searchFormRef.current.validate();
+        setFilter(res);
+      } catch (_) {
+        console.log(searchFormRef.current.getFieldsError());
+        // Message.error('校验失败，请检查字段！');
+      }
+    }
+  };
+
+  const handleTableChange = (pagination: PaginationProps, sorter: SorterInfo | SorterInfo[]) => {
+    console.log(pagination, sorter);
+    const { current, pageSize } = pagination;
+
+    if (current !== page || pageSize !== limit) {
+      setPage(current ?? 1);
+      setLimit(pageSize ?? 10);
+
+      // void fetchData();
+    }
+  };
+
+  const fetchData = async (page: number, limit: number) => {
     setLoading(true);
 
-    const params = {
-      page: 1,
-      limit: 10,
+    let params = {
+      page,
+      limit,
     };
+
+    filter && (params = { ...params, ...filter });
 
     try {
       const { code, result } = await evaluation.getEvaluationList(params);
 
       if (code === ResultEnum.SUCCESS) {
         setList(result.list);
+        setTotal(result.total);
         setLoading(false);
       }
-      console.log(result);
     } catch (error) {
       console.log(error);
     }
   };
-
-  const searchFormRef = useRef(null);
 
   const [visible, setVisible] = useState(false);
   const formRef = useRef<FormInstance<Evaluation>>(null);
@@ -210,7 +260,7 @@ const EvaluationList = () => {
       const { code } = await api(params);
 
       if (code === ResultEnum.SUCCESS) {
-        await fetchData();
+        reloadData();
 
         handleCloseModal();
 
@@ -250,29 +300,19 @@ const EvaluationList = () => {
           size='large'
         >
           <Row style={{ width: '100%' }}>
-            <Col span={8}>
-              <FormItem label='用户名' field='username'>
-                <Input placeholder='请输入用户名' />
+            <Col span={10}>
+              <FormItem label='评测名称' field='name'>
+                <Input placeholder='请输入评测名称' />
               </FormItem>
             </Col>
-            <Col span={8}>
-              <FormItem label='手机号' field='mobile'>
-                <InputNumber placeholder='请输入手机号' />
-              </FormItem>
-            </Col>
-          </Row>
-          <Row style={{ width: '100%' }}>
-            <Col span={8}>
-              <FormItem label='性别' field='gender'>
-                <RadioGroup defaultValue='1'>
-                  <Radio value='1'>男</Radio>
-                  <Radio value='2'>女</Radio>
-                </RadioGroup>
-              </FormItem>
-            </Col>
-            <Col span={8} offset={8}>
+            <Col span={8} offset={6}>
               <div className='button-container'>
-                <Button key='reset' htmlType='reset' icon={<div className='r-ph-anchor-simple-thin' />}>
+                <Button
+                  key='reset'
+                  htmlType='reset'
+                  icon={<div className='r-ph-anchor-simple-thin' />}
+                  onClick={handleReset}
+                >
                   重置
                 </Button>
                 <Button
@@ -280,6 +320,7 @@ const EvaluationList = () => {
                   type='primary'
                   htmlType='button'
                   icon={<div className='r-ph-anchor-simple-thin' />}
+                  onClick={handleSearch}
                 >
                   查询
                 </Button>
@@ -312,9 +353,10 @@ const EvaluationList = () => {
             loading={loading}
             scroll={{ x: true }}
             border={{ bodyCell: false }}
-            pagination={{ total: 50, showTotal: true, showJumper: true, sizeCanChange: true }}
+            pagination={{ total, showTotal: true, showJumper: true, sizeCanChange: true }}
             pagePosition='bottomCenter'
             rowKey='id'
+            onChange={handleTableChange}
           />
         </Card>
       </section>

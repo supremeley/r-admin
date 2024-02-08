@@ -2,12 +2,11 @@ import Login from '@/views/login';
 
 const router: RouteWithMetaObject[] = [
   {
-    id: 'Login',
-    path: 'login',
+    id: 'NotFound',
+    path: '/*',
     element: <Login />,
     meta: {
-      title: '登录',
-      needLazyLoad: true,
+      title: 'not found',
     },
   },
 ];

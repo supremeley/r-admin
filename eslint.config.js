@@ -55,6 +55,7 @@ export default [
     },
     rules: {
       '@typescript-eslint/prefer-nullish-coalescing': 'warn',
+      '@typescript-eslint/no-misused-promises': 'warn',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       'prettier/prettier': 'error',
       'simple-import-sort/imports': 'error',

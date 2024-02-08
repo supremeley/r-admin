@@ -7,4 +7,5 @@ export interface Menu {
 export interface SySState {
   menu: Menu[] | [];
   history: Menu[] | [];
+  routes: RouteWithMetaObject[] | [];
 }
