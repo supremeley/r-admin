@@ -3,10 +3,19 @@ export interface LoginParams {
   password: string;
 }
 
-export interface LoginResponse {
+export interface Auth {
   token: string;
-  userinfo: {
-    username: string;
-    userID: string;
-  };
+  userinfo: Userinfo;
 }
+
+export interface Userinfo {
+  id: number;
+  username: string;
+  mobile: number;
+  gender: number;
+  type: number;
+  status: boolean;
+  avatar?: string;
+}
+
+export type LoginResponse = Auth;

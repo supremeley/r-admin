@@ -1,6 +1,11 @@
 export interface UserInfo {
+  id: number;
   username: string;
-  userID: string;
+  mobile: number;
+  gender: number;
+  type: number;
+  status: boolean;
+  avatar?: string;
 }
 
 export interface AuthState {

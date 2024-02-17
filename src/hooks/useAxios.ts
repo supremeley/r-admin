@@ -1,4 +1,4 @@
-import { AxiosRequest } from '@utils/http';
+import { AxiosRequest } from '@/utils';
 
 export function createAxios(opt?: Partial<AxiosRequest>) {
   return new AxiosRequest({

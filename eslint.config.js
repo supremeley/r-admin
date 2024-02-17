@@ -7,12 +7,10 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// console.log('__dirname', __dirname);
 
 const data = fs.readFileSync(__dirname + '/.eslintrc-auto-import.json', 'utf-8');
-// console.log(data);
+
 const eslintrcAutoImportGlobals = JSON.parse(data.toString());
-// console.log(eslintrcAutoImportGlobals);
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
@@ -56,6 +54,8 @@ export default [
     rules: {
       '@typescript-eslint/prefer-nullish-coalescing': 'warn',
       '@typescript-eslint/no-misused-promises': 'warn',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       'prettier/prettier': 'error',
       'simple-import-sort/imports': 'error',

@@ -1,9 +1,9 @@
-import { useAxios } from '@/hooks/useAxios';
+import { useAxios } from '@/hooks';
 
 import type { LoginParams, LoginResponse } from './interface';
 
 enum Api {
-  Login = '/sys/login',
+  Login = '/auth/login',
 }
 
 export const login = (params: LoginParams) => {

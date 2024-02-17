@@ -4,10 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { AuthState, UserInfo } from './interface';
 
 const initialState: AuthState = {
-  userinfo: {
-    userID: '123',
-    username: 'ray',
-  },
+  userinfo: null,
   token: null,
 };
 
@@ -15,15 +12,19 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    saveUserinfo: (state, action: PayloadAction<UserInfo>) => {
+    setUserinfo: (state, action: PayloadAction<UserInfo | null>) => {
       state.userinfo = action.payload;
     },
-    saveToken: (state, action: PayloadAction<string>) => {
+    setToken: (state, action: PayloadAction<string | null>) => {
       state.token = action.payload;
+    },
+    logout: (state) => {
+      state.userinfo = null;
+      state.token = null;
     },
   },
 });
 
-export const { saveUserinfo, saveToken } = authSlice.actions;
+export const { setUserinfo, setToken } = authSlice.actions;
 
 export default authSlice.reducer;

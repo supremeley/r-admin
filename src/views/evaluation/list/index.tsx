@@ -1,31 +1,26 @@
 import './index.scss';
 
+import type { PaginationProps, TableColumnProps } from '@arco-design/web-react';
 import {
   Button,
   Card,
-  Form,
-  FormInstance,
   Grid,
-  Input,
-  // InputNumber,
   Message,
   Modal,
   PageHeader,
-  PaginationProps,
   Popconfirm,
-  // Radio,
+  Switch,
   Table,
-  type TableColumnProps,
   Tooltip,
 } from '@arco-design/web-react';
-import { SorterInfo } from '@arco-design/web-react/es/Table/interface';
+import type { SorterInfo } from '@arco-design/web-react/es/Table/interface';
 
 import { evaluation } from '@/api';
 import type { Evaluation, EvaluationFilter } from '@/api/evaluation/interface';
 import { ResultEnum } from '@/enums/http';
+import { useForm } from '@/hooks';
+import type { FormConfig } from '@/hooks/useForm/interface';
 
-const FormItem = Form.Item;
-// const RadioGroup = Radio.Group;
 const Row = Grid.Row;
 const Col = Grid.Col;
 
@@ -33,31 +28,41 @@ const EvaluationList = () => {
   const columns: TableColumnProps<Evaluation>[] = [
     {
       title: 'ID',
-      width: 180,
+      width: 120,
       dataIndex: 'id',
       sorter: {
         compare: (a: Evaluation, b: Evaluation) => a.id - b.id,
-        // multiple: 2,
       },
     },
     {
       title: '名称',
       width: 240,
       dataIndex: 'name',
-      // sorter: {
-      // compare: (a: Evaluation, b: Evaluation) => a.name - b.name,
-      // multiple: 2,
-      // },
+    },
+    {
+      title: '状态',
+      width: 120,
+      dataIndex: 'status',
+      sorter: {
+        compare: (a: Evaluation) => (a.status ? 1 : -1),
+      },
+      render: (col, item) => (
+        <Switch
+          checked={col}
+          checkedIcon={<div className='r-material-symbols:check'></div>}
+          onChange={() => handleSwitchStatus(item)}
+        />
+      ),
     },
     {
       title: '说明',
       width: 240,
-      dataIndex: 'remark',
+      dataIndex: 'describe',
     },
     {
       title: '备注',
       width: 240,
-      dataIndex: 'mark',
+      dataIndex: 'remark',
     },
     {
       title: '操作',
@@ -78,7 +83,12 @@ const EvaluationList = () => {
           </Col>
           <Col span={6}>
             <Tooltip content='详情'>
-              <Button type='primary' shape='circle' icon={<div className='r-ph-anchor-simple-thin' />}></Button>
+              <Button
+                type='primary'
+                shape='circle'
+                icon={<div className='r-ph-anchor-simple-thin' />}
+                onClick={() => jumpToDetail(item.id)}
+              ></Button>
             </Tooltip>
           </Col>
           <Col span={6}>
@@ -118,19 +128,69 @@ const EvaluationList = () => {
   const [loading, setLoading] = useState(false);
   const [list, setList] = useState<Evaluation[]>([]);
   const [total, setTotal] = useState<number>(0);
-
-  useEffect(() => {
-    console.log('useEffect');
-    void fetchData(page, limit);
-  }, [page, limit]);
-
-  const searchFormRef = useRef<FormInstance<EvaluationFilter>>(null);
   const [filter, setFilter] = useState<EvaluationFilter | null>(null);
 
   useEffect(() => {
     console.log('useEffect');
-    reloadData();
-  }, [filter]);
+    void fetchData(page, limit);
+  }, [page, limit, filter]);
+
+  const handleReset = () => {
+    searchFormRef?.resetFields();
+  };
+
+  const handleSearch = async () => {
+    if (searchFormRef) {
+      try {
+        const res = await searchFormRef.validate();
+        setFilter(res);
+        // setPage(1);
+      } catch (_) {
+        console.log(searchFormRef.getFieldsError());
+        // Message.error('校验失败，请检查字段！');
+      }
+    }
+  };
+
+  const navigate = useNavigate();
+
+  const jumpToDetail = (id: number) => {
+    navigate(`/evaluation/detail/${id}`);
+  };
+
+  const searchFormConfig: FormConfig = {
+    layout: 'inline',
+    autoComplete: 'off',
+    labelCol: { span: 8 },
+    wrapperCol: { span: 16 },
+    formItems: [
+      {
+        formItemType: 'input',
+        label: '评测名称',
+        field: 'name',
+        placeholder: '请输入评测名称',
+        allowClear: true,
+        span: 12,
+      },
+    ],
+    formButtons: [
+      {
+        name: '重置',
+        htmlType: 'reset',
+        icon: <div className='r-ph-anchor-simple-thin' />,
+        onClick: handleReset,
+      },
+      {
+        name: '查询',
+        htmlType: 'button',
+        type: 'primary',
+        icon: <div className='r-ph-anchor-simple-thin' />,
+        onClick: handleSearch,
+      },
+    ],
+  };
+
+  const [SearchForm, searchFormRef] = useForm<EvaluationFilter>(searchFormConfig);
 
   const reloadData = () => {
     if (page === 1) {
@@ -140,20 +200,11 @@ const EvaluationList = () => {
     }
   };
 
-  const handleReset = () => {
-    searchFormRef.current?.resetFields();
-  };
+  const handleSwitchStatus = async (item: Evaluation) => {
+    item.status = !item.status;
+    // setCurrentItem(item);
 
-  const handleSearch = async () => {
-    if (searchFormRef.current) {
-      try {
-        const res = await searchFormRef.current.validate();
-        setFilter(res);
-      } catch (_) {
-        console.log(searchFormRef.current.getFieldsError());
-        // Message.error('校验失败，请检查字段！');
-      }
-    }
+    await fetchOperate(2, item);
   };
 
   const handleTableChange = (pagination: PaginationProps, sorter: SorterInfo | SorterInfo[]) => {
@@ -163,8 +214,6 @@ const EvaluationList = () => {
     if (current !== page || pageSize !== limit) {
       setPage(current ?? 1);
       setLimit(pageSize ?? 10);
-
-      // void fetchData();
     }
   };
 
@@ -192,9 +241,35 @@ const EvaluationList = () => {
   };
 
   const [visible, setVisible] = useState(false);
-  const formRef = useRef<FormInstance<Evaluation>>(null);
   const [currentItem, setCurrentItem] = useState<Evaluation | null>(null);
   const [mode, setMode] = useState(1);
+
+  const editorFormConfig: FormConfig = {
+    autoComplete: 'off',
+    labelCol: { span: 6 },
+    wrapperCol: { span: 18 },
+    formItems: [
+      {
+        formItemType: 'input',
+        label: '评测名称',
+        field: 'name',
+        placeholder: '请输入评测名称',
+        rules: [{ required: true, message: '请输入名称' }],
+      },
+      {
+        formItemType: 'input',
+        label: '说明',
+        field: 'describe',
+      },
+      {
+        formItemType: 'input',
+        label: '备注',
+        field: 'remark',
+      },
+    ],
+  };
+
+  const [EditorForm, editorFormRef] = useForm<Evaluation>(editorFormConfig);
 
   const handleOpenModal = (mode: number, data?: Evaluation) => {
     setVisible(true);
@@ -202,7 +277,7 @@ const EvaluationList = () => {
 
     if (data) {
       setCurrentItem(data);
-      formRef.current?.setFieldsValue(data);
+      editorFormRef.setFieldsValue(data);
     }
   };
 
@@ -211,13 +286,13 @@ const EvaluationList = () => {
   };
 
   const handleCreateOrUpdate = async () => {
-    if (formRef.current) {
+    if (editorFormRef) {
       try {
-        const res = await formRef.current.validate();
+        const res = await editorFormRef.validate();
 
         await fetchOperate(mode, res);
       } catch (_) {
-        console.log(formRef.current.getFieldsError());
+        console.log(editorFormRef.getFieldsError());
         // Message.error('校验失败，请检查字段！');
       }
     }
@@ -264,7 +339,7 @@ const EvaluationList = () => {
 
         handleCloseModal();
 
-        formRef?.current?.clearFields();
+        editorFormRef.clearFields();
 
         Message.success(msg);
       }
@@ -291,43 +366,7 @@ const EvaluationList = () => {
         }}
       />
       <Card>
-        <Form
-          ref={searchFormRef}
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          autoComplete='off'
-          layout='inline'
-          size='large'
-        >
-          <Row style={{ width: '100%' }}>
-            <Col span={10}>
-              <FormItem label='评测名称' field='name'>
-                <Input placeholder='请输入评测名称' />
-              </FormItem>
-            </Col>
-            <Col span={8} offset={6}>
-              <div className='button-container'>
-                <Button
-                  key='reset'
-                  htmlType='reset'
-                  icon={<div className='r-ph-anchor-simple-thin' />}
-                  onClick={handleReset}
-                >
-                  重置
-                </Button>
-                <Button
-                  key='search'
-                  type='primary'
-                  htmlType='button'
-                  icon={<div className='r-ph-anchor-simple-thin' />}
-                  onClick={handleSearch}
-                >
-                  查询
-                </Button>
-              </div>
-            </Col>
-          </Row>
-        </Form>
+        <SearchForm />
       </Card>
       <section className='mt-4'>
         <Card
@@ -369,17 +408,7 @@ const EvaluationList = () => {
         focusLock={true}
         mountOnEnter={false}
       >
-        <Form ref={formRef} autoComplete='off' scrollToFirstError>
-          <FormItem label='评测名称' field='name' rules={[{ required: true }]}>
-            <Input placeholder='please enter...' />
-          </FormItem>
-          <FormItem label='说明' field='describe'>
-            <Input placeholder='please enter...' />
-          </FormItem>
-          <FormItem label='备注' field='remark'>
-            <Input placeholder='please enter...' />
-          </FormItem>
-        </Form>
+        <EditorForm />
       </Modal>
     </section>
   );

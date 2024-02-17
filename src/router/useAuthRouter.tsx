@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, redirect } from 'react-router-dom';
 
 import LazyLoadComponent from '@/components/LazyLoadComponent';
-import { RootState } from '@/store/index';
+import type { RootState } from '@/store/index';
 
 export const useAuthRouter = () => {
   const auth = useSelector((state: RootState) => state.auth);
@@ -15,6 +15,7 @@ export const useAuthRouter = () => {
   if (!auth.token) {
     redirect('/login'); // 替换为你的登录页面路径
   }
+
   if (!sys.routes.length) {
     setTimeout(() => {
       const routes = [

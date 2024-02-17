@@ -1,17 +1,22 @@
 export interface Evaluation {
   name: string;
-  type: string;
-  status: number;
+  type: number;
+  status: boolean;
   sortNo: number;
   describe: string;
   remark: string;
   id: number;
 }
 
-export type EvaluationListParams = ListParams &
-  Partial<{
-    name: string;
-  }>;
+export interface EvaluationWithTopic extends Evaluation {
+  topicList: Topic[];
+}
+
+export type EvaluationListParams = ListParams & Partial<EvaluationFilter>;
+
+export interface EvaluationrDetailParams {
+  id: number;
+}
 
 export type EvaluationListResult = ListResult<Evaluation>;
 

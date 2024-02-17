@@ -1,11 +1,11 @@
 import { useAxios } from '@/hooks/useAxios';
 
-import type { LoginParams, LoginResponse } from './interface';
+import type { User, UserListParams } from './interface';
 
 enum Api {
   UserList = '/user/list',
 }
 
-export const getUserList = (params: LoginParams) => {
-  return useAxios.post<SuccessResponse<LoginResponse>>({ url: Api.UserList, data: params }, { needToken: false });
+export const getUserList = (params: UserListParams) => {
+  return useAxios.post<SuccessResponse<User[]>>({ url: Api.UserList, data: params }, { needToken: false });
 };

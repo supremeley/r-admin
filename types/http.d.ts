@@ -16,7 +16,7 @@ declare global {
   }
 
   interface SuccessResponse<T = unknown> extends ResponseData {
-    code: Omit<ResponseCode, ResponseFailCode>;
+    code: Exclude<ResponseCode, ResponseFailCode>;
     result: T;
   }
 

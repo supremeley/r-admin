@@ -1,12 +1,15 @@
-export interface LoginParams {
-  username: string;
-  password: string;
+export interface User {
+  name: string;
+  type: string;
+  status: number;
+  sortNo: number;
+  describe: string;
+  remark: string;
+  id: number;
 }
 
-export interface LoginResponse {
-  token: string;
-  userinfo: {
-    username: string;
-    userID: string;
-  };
+export type UserListParams = ListParams & Partial<UserFilter>;
+
+export interface UserFilter {
+  name: string;
 }
