@@ -1,3 +1,5 @@
+import type { UploadItem } from '@arco-design/web-react/es/Upload';
+
 export interface Manager {
   id: number;
   username: string;
@@ -7,6 +9,11 @@ export interface Manager {
   status: boolean;
   describe: string;
   remark: string;
+  avatar: string;
+}
+
+export interface EditorManager extends Manager {
+  avatar: UploadItem[];
 }
 
 export type ManagerListParams = ListParams & Partial<ManagerFilter>;

@@ -1,10 +1,23 @@
 import { Message } from '@arco-design/web-react';
-import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import type {
+  AxiosError,
+  AxiosInstance,
+  AxiosProgressEvent,
+  AxiosRequestConfig,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from 'axios';
 import axios from 'axios';
 import qs from 'qs';
 
-import { ContentTypeEnum, RequestEnum, ResultEnum } from '@/enums/http';
-import { getToken } from '@/hooks';
+import { ContentTypeEnum, RequestEnum, ResultEnum } from '@/enums';
+import type { RootStore } from '@/store';
+
+let store: unknown;
+
+export const injectStore = (_store: unknown) => {
+  store = _store;
+};
 
 export class AxiosRequest {
   private axiosInstance: AxiosInstance;
@@ -21,23 +34,6 @@ export class AxiosRequest {
       (config) => {
         config = this.requestInterceptors(config, this.options);
 
-        // // if (method?.toUpperCase() === 'POST' || needDataInRequestBody) {
-        // config.data = params || data;
-        //   config.params = undefined;
-        //   nHeaders['Content-Type'] = nHeaders['Content-Type'] || contentType.JSON;
-        // }
-
-        // if (method?.toUpperCase() === 'GET' && needJoinTime) {
-        //   if (!isString(params)) {
-        //     config.params = Object.assign(params || {}, joinTimestamp(false));
-        //   } else {
-        //     config.url = config.url + params + `${joinTimestamp(true)}`;
-        //     config.params = undefined;
-        //   }
-        // }
-
-        // config.headers = nHeaders;
-
         return config;
       },
       (error) => {
@@ -50,7 +46,7 @@ export class AxiosRequest {
 
     this.axiosInstance.interceptors.response.use(
       (res: AxiosResponse<ResponseData>) => {
-        console.log('response', res);
+        console.log('response success', res);
         const { data, config } = res;
         const { code, message } = data;
 
@@ -67,7 +63,7 @@ export class AxiosRequest {
         }
       },
       (error: AxiosError<ResponseData, SuccessResponse>) => {
-        console.log('response', error);
+        console.log('response error', error);
         const { config, response } = error;
 
         const { data } = response as AxiosResponse<ResponseData>;
@@ -75,9 +71,6 @@ export class AxiosRequest {
         const { code, message } = data;
 
         // TODO: Add response error hook
-        // if (code === ResultEnum.SUCCESS) {
-
-        // }
 
         if (message) {
           return Promise.reject({ code, message });
@@ -86,8 +79,6 @@ export class AxiosRequest {
         return Promise.reject({
           message: '请求异常:' + JSON.stringify({ url: config?.url, code, message }),
         });
-
-        // return Promise.reject(error);
       },
     );
   }
@@ -116,8 +107,9 @@ export class AxiosRequest {
     const needToken = (config as CreateAxiosOptions).requestOptions!.needToken ?? options.requestOptions;
 
     if (needToken) {
-      const [token] = getToken();
-      nHeaders.Authorization = token;
+      const auth = (store as RootStore).getState().auth;
+
+      nHeaders.Authorization = auth.token;
     }
 
     const params = config.params || {};
@@ -126,14 +118,12 @@ export class AxiosRequest {
     Object.assign({}, config.params, config.data);
 
     if (config.method?.toUpperCase() === RequestEnum.GET) {
-      // config.params = Object.assign(params, data);
       config.data = undefined;
     }
 
     if (config.method?.toUpperCase() === RequestEnum.POST || config.method?.toUpperCase() === RequestEnum.PUT) {
       config.data = Object.assign(data, params);
       config.params = undefined;
-      // nHeaders['Content-Type'] = ContentTypeEnum.FORM_URLENCODED;
     }
 
     config.headers = nHeaders;
@@ -152,10 +142,6 @@ export class AxiosRequest {
           onClose: () => {
             // TODO:
             window.location.href = '/login';
-            // JumpToLogin();
-            // return <JumpToLogin />
-            // const [{ logout: authLogout }] = useAuth();
-            // authLogout();
           },
         });
         break;
@@ -207,17 +193,14 @@ export class AxiosRequest {
       this.axiosInstance
         .request<unknown, AxiosResponse<SuccessResponse>>(conf)
         .then((res: AxiosResponse<SuccessResponse>) => {
-          const { config, data } = res;
+          const { data } = res;
 
-          if (config.responseType === 'blob') {
-            // TODO:
-            // resolve(data);
-          }
+          // TODO: if (config.responseType === 'blob') {
 
           resolve(data as unknown as Promise<T>);
         })
         .catch((error: ResponseData) => {
-          // console.log(error);
+          console.log(error);
 
           const needNotify = opt.needNotify!;
 
@@ -230,17 +213,23 @@ export class AxiosRequest {
     });
   }
 
-  // uploadFile<T = any>(config: AxiosRequestConfig, params: UploadFileParams, callback?: UploadFileCallBack) {
-  //   const formData = new FormData();
-  //   formData.append('file', params.file);
+  uploadFile<T = unknown>(
+    config: AxiosRequestConfig,
+    params: UploadFileParams,
+    onProgress?: (progressEvent: AxiosProgressEvent) => void,
+  ): Promise<T> {
+    const formData = new FormData();
 
-  //   return this.axiosInstance.request<T>({
-  //     ...config,
-  //     method: 'POST',
-  //     data: formData,
-  //     headers: {
-  //       'Content-Type': contentType.FORM_DATA,
-  //     },
-  //   });
-  // }
+    formData.append('file', params.file);
+
+    return this.request({
+      ...config,
+      method: 'POST',
+      data: formData,
+      headers: {
+        'Content-Type': ContentTypeEnum.FORM_DATA,
+      },
+      onUploadProgress: onProgress,
+    });
+  }
 }

@@ -1,21 +1,15 @@
-export interface LoginParams {
-  username: string;
-  password: string;
+export interface Premission {
+  route: AuthRoute[];
 }
 
-export interface Auth {
-  token: string;
-  userinfo: Userinfo;
+export interface AuthRoute {
+  // TODO: id 应该是number
+  // id: number;
+  id: string;
+  name?: string;
+  path: string;
+  redirect?: string;
+  params?: Record<string, string | number>;
+  meta?: RouteMetaObject;
+  children?: AuthRoute[];
 }
-
-export interface Userinfo {
-  id: number;
-  username: string;
-  mobile: number;
-  gender: number;
-  type: number;
-  status: boolean;
-  avatar?: string;
-}
-
-export type LoginResponse = Auth;

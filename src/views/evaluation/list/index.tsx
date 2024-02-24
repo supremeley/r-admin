@@ -14,10 +14,11 @@ import {
   Tooltip,
 } from '@arco-design/web-react';
 import type { SorterInfo } from '@arco-design/web-react/es/Table/interface';
+import qs from 'qs';
 
 import { evaluation } from '@/api';
-import type { Evaluation, EvaluationFilter } from '@/api/evaluation/interface';
-import { ResultEnum } from '@/enums/http';
+import type { Evaluation, EvaluationFilter, EvaluationListParams } from '@/api/evaluation/interface';
+import { ResultEnum } from '@/enums';
 import { useForm } from '@/hooks';
 import type { FormConfig } from '@/hooks/useForm/interface';
 
@@ -123,6 +124,9 @@ const EvaluationList = () => {
     },
   ];
 
+  const location = useLocation();
+  const [type, setType] = useState(0);
+
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [loading, setLoading] = useState(false);
@@ -131,9 +135,15 @@ const EvaluationList = () => {
   const [filter, setFilter] = useState<EvaluationFilter | null>(null);
 
   useEffect(() => {
-    console.log('useEffect');
+    if (location.search) {
+      const query = qs.parse(location.search.substring(1));
+      setType(query.type as unknown as number);
+    }
+  }, [location]);
+
+  useEffect(() => {
     void fetchData(page, limit);
-  }, [page, limit, filter]);
+  }, [page, limit, filter, type]);
 
   const handleReset = () => {
     searchFormRef?.resetFields();
@@ -208,7 +218,9 @@ const EvaluationList = () => {
   };
 
   const handleTableChange = (pagination: PaginationProps, sorter: SorterInfo | SorterInfo[]) => {
+    // TODO: 后端做排序
     console.log(pagination, sorter);
+
     const { current, pageSize } = pagination;
 
     if (current !== page || pageSize !== limit) {
@@ -220,12 +232,15 @@ const EvaluationList = () => {
   const fetchData = async (page: number, limit: number) => {
     setLoading(true);
 
-    let params = {
+    const params: EvaluationListParams = {
       page,
       limit,
     };
 
-    filter && (params = { ...params, ...filter });
+    // filter && (params = { ...params, ...filter });
+    // type && (params = { ...params, type: type ? Number(type) : 0 });
+
+    Object.assign(params, { ...filter }, { type: type ? Number(type) : 0 });
 
     try {
       const { code, result } = await evaluation.getEvaluationList(params);
@@ -278,6 +293,9 @@ const EvaluationList = () => {
     if (data) {
       setCurrentItem(data);
       editorFormRef.setFieldsValue(data);
+    } else {
+      setCurrentItem(null);
+      editorFormRef.resetFields();
     }
   };
 
@@ -317,6 +335,7 @@ const EvaluationList = () => {
       case 1:
         api = evaluation.createEvaluation;
         msg = '新增成功';
+        params.type = type ? Number(type) : 0;
         break;
       case 2:
         api = evaluation.updateEvaluation;
@@ -355,12 +374,12 @@ const EvaluationList = () => {
         breadcrumb={{
           routes: [
             {
-              path: '/',
-              breadcrumbName: 'Home',
+              path: 'evaluation',
+              breadcrumbName: '评测',
             },
             {
-              path: '/channel',
-              breadcrumbName: 'Channel',
+              path: 'evaluation/list',
+              breadcrumbName: '评测列表',
             },
           ],
         }}
@@ -386,7 +405,6 @@ const EvaluationList = () => {
           }
         >
           <Table
-            // tableLayoutFixed
             columns={columns}
             data={list}
             loading={loading}
@@ -402,11 +420,11 @@ const EvaluationList = () => {
       <Modal
         title={(mode === 1 ? '新增' : '编辑') + '评测'}
         visible={visible}
-        onOk={handleCreateOrUpdate}
-        onCancel={handleCloseModal}
         autoFocus={false}
         focusLock={true}
         mountOnEnter={false}
+        onOk={handleCreateOrUpdate}
+        onCancel={handleCloseModal}
       >
         <EditorForm />
       </Modal>

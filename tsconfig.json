@@ -32,8 +32,7 @@
       "@/*": ["src/*"],
       "@hooks/*": ["src/hooks/*"],
       "@api/*": ["src/api/*"],
-      "@enums/*": ["src/enums/*"],
-      "@topic/*": ["src/api/topic/*"]
+      "@enums/*": ["src/enums/*"]
     }
   },
   "include": ["src/**/*.js", "src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "config", "types"],

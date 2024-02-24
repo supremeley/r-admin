@@ -1,3 +1,5 @@
+export * from './dynamicsRoutes';
+
 export const formItemLayout = {
   labelCol: {
     span: 6,

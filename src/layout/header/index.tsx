@@ -1,22 +1,24 @@
 import './index.scss';
 
 import { Avatar, Dropdown, Menu, Switch } from '@arco-design/web-react';
-import { useSelector } from 'react-redux';
 
-// import { saveToken, saveUserinfo } from '@/store/auth';
-// import { useLogin } from '@/hooks/useAuth';
-import type { RootState } from '@/store';
-
-const dropList = (
-  <Menu>
-    <Menu.Item key='1'>个人中心</Menu.Item>
-    <Menu.Item key='2'>退出登录</Menu.Item>
-  </Menu>
-);
+import { useAppSelector, useAuth } from '@/hooks';
 
 const LayoutHeader = () => {
-  const auth = useSelector((state: RootState) => state.auth);
+  const [{ logout: authLogout }] = useAuth();
+
+  const auth = useAppSelector((state) => state.auth);
+
   const { userinfo } = auth;
+
+  const dropList = (
+    <Menu>
+      <Menu.Item key='1'>个人中心</Menu.Item>
+      <Menu.Item key='2' onClick={authLogout}>
+        退出登录
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <section className='header p-4 pr-12'>

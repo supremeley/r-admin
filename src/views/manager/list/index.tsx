@@ -17,9 +17,8 @@ import {
 import type { SorterInfo } from '@arco-design/web-react/es/Table/interface';
 
 import { manager } from '@/api';
-import type { Manager, ManagerFilter, OperateManagerResult } from '@/api/manager/interface';
-import { Gender, ManagerType } from '@/enums';
-import { ResultEnum } from '@/enums/http';
+import type { EditorManager, Manager, ManagerFilter, OperateManagerResult } from '@/api/manager/interface';
+import { Gender, ManagerType, ResultEnum } from '@/enums';
 import { useForm } from '@/hooks';
 import type { FormConfig } from '@/hooks/useForm/interface';
 
@@ -185,7 +184,6 @@ const ManagerList = () => {
   const [filter, setFilter] = useState<ManagerFilter | null>(null);
 
   useEffect(() => {
-    console.log('useEffect');
     void fetchData(page, limit);
   }, [page, limit, filter]);
 
@@ -194,11 +192,9 @@ const ManagerList = () => {
   };
 
   const handleSearch = async () => {
-    console.log(searchFormRef);
     if (searchFormRef) {
       try {
         const res = await searchFormRef.validate();
-        console.log(res);
 
         setFilter(res);
         setPage(1);
@@ -300,7 +296,9 @@ const ManagerList = () => {
   };
 
   const handleTableChange = (pagination: PaginationProps, sorter: SorterInfo | SorterInfo[]) => {
+    // TODO: 后端做排序
     console.log(pagination, sorter);
+
     const { current, pageSize } = pagination;
 
     if (current !== page || pageSize !== limit) {
@@ -345,6 +343,10 @@ const ManagerList = () => {
         formItemType: 'uploadPhoto',
         label: '上传头像',
         field: 'avatar',
+        accept: '.jpg, .jpeg, .png',
+        triggerPropName: 'fileList',
+        listType: 'picture-card',
+        limit: 1,
       },
       {
         formItemType: 'input',
@@ -402,7 +404,7 @@ const ManagerList = () => {
     ],
   };
 
-  const [EditorForm, editorFormRef] = useForm<Manager>(editorFormConfig);
+  const [EditorForm, editorFormRef] = useForm<EditorManager>(editorFormConfig);
 
   const handleOpenModal = (mode: number, data?: Manager) => {
     setVisible(true);
@@ -410,7 +412,11 @@ const ManagerList = () => {
 
     if (data) {
       setCurrentItem(data);
-      editorFormRef.setFieldsValue(data);
+
+      editorFormRef.setFieldsValue({
+        ...data,
+        avatar: data.avatar ? [{ uid: '-1', url: data.avatar, name: data.avatar }] : undefined,
+      });
     } else {
       setCurrentItem(null);
       editorFormRef.resetFields();
@@ -426,7 +432,11 @@ const ManagerList = () => {
       try {
         const res = await editorFormRef.validate();
 
-        await fetchOperate(mode, res);
+        const avatar = res.avatar ? (res.avatar.at(-1)?.response as UploadFileResult)?.url : '';
+
+        const params = { ...res, avatar };
+
+        await fetchOperate(mode, params);
       } catch (_) {
         console.log(editorFormRef.getFieldsError());
         // Message.error('校验失败，请检查字段！');
@@ -444,6 +454,7 @@ const ManagerList = () => {
     let params: OperateManagerResult = {
       ...data,
       id: data.id ?? currentItem?.id,
+      // avatar: data.avatar,
     };
 
     let api,
@@ -496,7 +507,7 @@ const ManagerList = () => {
               breadcrumbName: '管理员',
             },
             {
-              path: 'list',
+              path: 'manager/list',
               breadcrumbName: '管理员列表',
             },
           ],

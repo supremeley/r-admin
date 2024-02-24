@@ -5,7 +5,10 @@ import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import { RouterWithLayout } from '@/router/index';
-import { store } from '@/store/index';
+import { store } from '@/store';
+import { injectStore } from '@/utils/http';
+
+injectStore(store);
 
 const persistor = persistStore(store);
 

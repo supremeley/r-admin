@@ -2,16 +2,19 @@ import './index.scss';
 
 import type {
   CheckboxGroupProps,
+  DatePickerProps,
   FormInstance,
   InputNumberProps,
   InputProps,
   RadioGroupProps,
   SwitchProps,
   TextAreaProps,
+  UploadProps,
 } from '@arco-design/web-react';
-import { Button, Checkbox, Form, Input, InputNumber, Progress, Radio, Switch, Upload } from '@arco-design/web-react';
-import type { UploadItem } from '@arco-design/web-react/es/Upload/upload';
+import { Button, Checkbox, DatePicker, Form, Input, InputNumber, Radio, Switch, Upload } from '@arco-design/web-react';
 import { omit } from 'lodash-es';
+
+import { file as fileUploadApi } from '@/api';
 
 import { FormButtonContainer, FormColContainer, FormRowContainer } from './components';
 import type { FormConfig } from './interface';
@@ -30,12 +33,6 @@ export function useForm<T = unknown>(formConfig: FormConfig): [() => JSX.Element
 
   const baseColWidth = 24 / baseColNum;
 
-  const [file, setFile] = useState<UploadItem>();
-
-  useEffect(() => {
-    console.log(file);
-  }, [file]);
-
   const CombineForm = () => {
     const isInLine = formConfig.layout === 'inline';
     const { formItems = [], formButtons = [] } = formConfig;
@@ -49,7 +46,14 @@ export function useForm<T = unknown>(formConfig: FormConfig): [() => JSX.Element
       <Form form={formInstance as unknown as FormInstance} {...formProps} className='use-form-container'>
         <FormRowContainer isInLine={isInLine}>
           {formItems.map((item) => {
-            const formItemProps = omit(item, ['allowClear', 'span', 'formItemType', 'autoSize', 'defaultValue']);
+            const formItemProps = omit(item, [
+              'allowClear',
+              'span',
+              'formItemType',
+              'autoSize',
+              'defaultValue',
+              'listType',
+            ]);
             const inputProps = omit(item, [
               'allowClear',
               'span',
@@ -96,51 +100,40 @@ export function useForm<T = unknown>(formConfig: FormConfig): [() => JSX.Element
                       <CheckboxGroup {...(inputProps as CheckboxGroupProps<string>)} />
                     </FormItem>
                   )}
+                  {item.formItemType === 'datePicker' && (
+                    <FormItem {...formItemProps}>
+                      <DatePicker {...(inputProps as DatePickerProps)} />
+                    </FormItem>
+                  )}
                   {item.formItemType === 'uploadPhoto' && (
                     <FormItem {...formItemProps}>
                       <Upload
-                        action='/'
-                        fileList={file ? [file] : []}
-                        showUploadList={false}
-                        onChange={(_, currentFile) => {
-                          setFile({
-                            ...currentFile,
-                            url: URL.createObjectURL(currentFile.originFile!),
-                          });
+                        {...(inputProps as UploadProps)}
+                        customRequest={async (option) => {
+                          const { onProgress, onError, onSuccess, file } = option;
+
+                          try {
+                            const { code, result } = await fileUploadApi.fileUpload({ file }, (event) => {
+                              if (event.total) {
+                                let percent;
+                                if (event.total > 0) {
+                                  percent = (event.loaded / event.total) * 100;
+                                }
+
+                                onProgress(parseInt(String(percent), 10));
+                              }
+                            });
+
+                            if (code === 200) {
+                              onSuccess(result);
+                            } else {
+                              onError();
+                            }
+                          } catch (e) {
+                            onError(e as object);
+                          }
                         }}
-                        onProgress={(currentFile) => {
-                          setFile(currentFile);
-                        }}
-                      >
-                        <div>
-                          {file?.url ? (
-                            <div className='arco-upload-list-item-picture custom-upload-avatar'>
-                              <img src={file.url} />
-                              <div className='arco-upload-list-item-picture-mask'>{/* <IconEdit /> */}</div>
-                              {file.status === 'uploading' && file.percent! < 100 && (
-                                <Progress
-                                  percent={file.percent!}
-                                  type='circle'
-                                  size='mini'
-                                  style={{
-                                    position: 'absolute',
-                                    left: '50%',
-                                    top: '50%',
-                                    transform: 'translateX(-50%) translateY(-50%)',
-                                  }}
-                                />
-                              )}
-                            </div>
-                          ) : (
-                            <div className='arco-upload-trigger-picture'>
-                              <div className='arco-upload-trigger-picture-text'>
-                                {/* <IconPlus /> */}
-                                <div style={{ marginTop: 10, fontWeight: 600 }}>Upload</div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </Upload>
+                      ></Upload>
                     </FormItem>
                   )}
                 </>

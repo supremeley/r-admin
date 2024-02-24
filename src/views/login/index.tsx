@@ -1,12 +1,12 @@
 import './index.scss';
 
-import { Button, Form, type FormInstance, Grid, Input } from '@arco-design/web-react';
+import type { FormInstance } from '@arco-design/web-react';
+import { Button, Form, Grid, Input } from '@arco-design/web-react';
 
-import type { LoginParams } from '@/api/sys/interface';
+import type { LoginParams } from '@/api/auth/interface';
 import { useAuth } from '@/hooks';
 
-const Row = Grid.Row;
-const Col = Grid.Col;
+const { Row, Col } = Grid;
 const FormItem = Form.Item;
 const InputPassword = Input.Password;
 

@@ -1,6 +1,6 @@
 import { AxiosRequest } from '@/utils';
 
-export function createAxios(opt?: Partial<AxiosRequest>) {
+export const createAxios = (opt?: CreateAxiosOptions) => {
   return new AxiosRequest({
     baseURL: import.meta.env.VITE_APP_GLOBAL_API_URL as string,
     requestOptions: {
@@ -9,6 +9,6 @@ export function createAxios(opt?: Partial<AxiosRequest>) {
     },
     ...opt,
   });
-}
+};
 
 export const useAxios = createAxios();

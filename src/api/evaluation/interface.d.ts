@@ -26,4 +26,5 @@ export type OperateEvaluationResult = Partial<Evaluation> & { id: number };
 
 export interface EvaluationFilter {
   name: string;
+  type?: number;
 }

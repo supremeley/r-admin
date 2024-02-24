@@ -1,30 +1,31 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
-import type { Menu, SySState } from './interface';
+// import type { AuthRoute } from '@/api/sys/interface';
+import type { MenuItem, SySState } from './interface';
 
 const initialState: SySState = {
   menu: [],
-  history: [],
   routes: [],
+  history: [],
 };
 
 export const systemSlice = createSlice({
   name: 'sys',
   initialState,
   reducers: {
-    setMenu: (state, action: PayloadAction<Menu[]>) => {
+    setMenu: (state, action: PayloadAction<MenuItem[]>) => {
       state.menu = action.payload;
+    },
+    setRoutes: (state, action: PayloadAction<RouteWithMetaObject[]>) => {
+      state.routes = action.payload;
     },
     setHistory: (state, action: PayloadAction<[]>) => {
       state.history = action.payload;
     },
-    setRoutes: (state, action: PayloadAction<[]>) => {
-      state.routes = action.payload;
-    },
   },
 });
 
-export const { setMenu, setHistory, setRoutes } = systemSlice.actions;
+export const { setMenu, setRoutes } = systemSlice.actions;
 
 export default systemSlice.reducer;

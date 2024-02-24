@@ -1,8 +1,6 @@
-// import { useDispatch, useSelector } from 'react-redux';
 import { Outlet } from 'react-router-dom';
 
 import LazyLoadComponent from '@/components/LazyLoadComponent';
-// import Layout from '@/layout/index';
 
 const whiteListModules = import.meta.glob('./modules/!(errorList).tsx');
 const errorListModules = import.meta.glob('./modules/errorList.tsx');

@@ -25,6 +25,15 @@ declare global {
     limit: number;
   }
 
+  interface UploadFileParams {
+    file: File | Blob;
+  }
+
+  export interface UploadFileResult {
+    url: string;
+    file: string;
+  }
+
   interface ListResult<T = unknown> {
     page: number;
     limit: number;

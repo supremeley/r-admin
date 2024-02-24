@@ -24,8 +24,7 @@ import type { ReactNode } from 'react';
 import { evaluation, topic } from '@/api';
 import type { OperateTopicOption, Topic } from '@/api/topic/interface';
 import { adminTypeMap, genderMap } from '@/constants';
-import { TopicType } from '@/enums';
-import { ResultEnum } from '@/enums/http';
+import { ResultEnum, TopicType } from '@/enums';
 import { useForm } from '@/hooks';
 import type { FormConfig } from '@/hooks/useForm/interface';
 
@@ -341,7 +340,7 @@ const EvaluationDetail = () => {
           routes: [
             {
               path: 'evaluation',
-              breadcrumbName: '评测管理',
+              breadcrumbName: '评测',
             },
             {
               path: 'evaluation/list',

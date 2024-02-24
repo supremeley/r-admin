@@ -1,6 +1,7 @@
 import type {
   ButtonProps,
   CheckboxGroupProps,
+  DatePickerProps,
   FormItemProps,
   FormProps,
   InputNumberProps,
@@ -8,6 +9,7 @@ import type {
   RadioGroupProps,
   SwitchProps,
   TextAreaProps,
+  UploadProps,
 } from '@arco-design/web-react';
 
 export type FormItemConfig =
@@ -16,8 +18,9 @@ export type FormItemConfig =
   | (FormItemProps & TextAreaProps & { formItemType: 'textarea' })
   | (FormItemProps & SwitchProps & { formItemType: 'switch'; span?: number })
   | (FormItemProps & RadioGroupProps & { formItemType: 'radio'; span?: number })
-  | (FormItemProps & RadioGroupProps & { formItemType: 'uploadPhoto'; span?: number })
-  | (FormItemProps & CheckboxGroupProps<string | number> & { formItemType: 'checkbox'; span?: number });
+  | (FormItemProps & CheckboxGroupProps<string | number> & { formItemType: 'checkbox'; span?: number })
+  | (FormItemProps & DatePickerProps & { formItemType: 'datePicker'; span?: number })
+  | (FormItemProps & UploadProps & { formItemType: 'uploadPhoto'; span?: number });
 
 //     | 'inputNumber'
 //     | 'select'

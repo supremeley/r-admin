@@ -2,11 +2,12 @@ import './index.scss';
 
 import { Card, Descriptions, PageHeader } from '@arco-design/web-react';
 import type { DataType } from '@arco-design/web-react/es/Descriptions/interface';
-import { adminTypeMap, genderMap } from '@constants/index';
+import type { ReactNode } from 'react';
 
 import { manager } from '@/api';
 import type { Manager } from '@/api/manager/interface';
-import { ResultEnum } from '@/enums/http';
+import { adminTypeMap, genderMap } from '@/constants';
+import { ResultEnum } from '@/enums';
 
 type Desc = Record<
   string,
@@ -40,7 +41,6 @@ const ManagerDetail = () => {
   const [detailDesc, setDetailDesc] = useState<DataType>([]);
 
   useEffect(() => {
-    // console.log('useEffect');
     void fetchData();
   }, []);
 
@@ -79,6 +79,10 @@ const ManagerDetail = () => {
             {
               path: 'manager',
               breadcrumbName: '管理员',
+            },
+            {
+              path: 'manager/list',
+              breadcrumbName: '管理员列表',
             },
             {
               path: 'manager/detail',
