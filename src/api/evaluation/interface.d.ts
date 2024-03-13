@@ -1,6 +1,11 @@
+import { EvaluationTagEnum, EvaluationTypeEnum } from '@/enums';
+
+import { TopicGroupWithTopic, TopicWithOption } from '../topic/interface';
+
 export interface Evaluation {
   name: string;
-  type: number;
+  tag: EvaluationTagEnum;
+  type: EvaluationTypeEnum;
   status: boolean;
   sortNo: number;
   describe: string;
@@ -9,7 +14,8 @@ export interface Evaluation {
 }
 
 export interface EvaluationWithTopic extends Evaluation {
-  topicList: Topic[];
+  topicList: TopicWithOption[];
+  topicGroupList: TopicGroupWithTopic[];
 }
 
 export type EvaluationListParams = ListParams & Partial<EvaluationFilter>;

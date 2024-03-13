@@ -1,6 +1,6 @@
 import './index.scss';
 
-import { Avatar, Dropdown, Menu, Switch } from '@arco-design/web-react';
+import { Avatar, Dropdown, Menu } from '@arco-design/web-react';
 
 import { useAppSelector, useAuth } from '@/hooks';
 
@@ -21,8 +21,8 @@ const LayoutHeader = () => {
   );
 
   return (
-    <section className='header p-4 pr-12'>
-      <Switch className='mr-4' />
+    <section className='header  pr-12'>
+      {/* <Switch className='mr-4' /> */}
       <Dropdown droplist={dropList} position='bl'>
         <div className='flex items-center cursor-pointer'>
           <Avatar size={40}>

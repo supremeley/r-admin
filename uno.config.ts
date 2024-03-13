@@ -3,6 +3,7 @@ import presetIcons from '@unocss/preset-icons';
 import { defineConfig, presetUno, UserConfig } from 'unocss';
 
 export default defineConfig({
+  rules: [['white-break', { 'white-space': 'break-spaces' }]],
   theme: {
     colors: {
       veryCool: '#0000ff', // class="text-very-cool"
@@ -14,10 +15,11 @@ export default defineConfig({
   presets: [
     presetUno(),
     presetIcons({
-      prefix: 'r-',
+      prefix: 'i-',
       extraProperties: {
         display: 'inline-block',
         'vertical-align': 'middle',
+        'font-size': '18px',
       },
     }),
     // presetAttributify({
@@ -28,6 +30,7 @@ export default defineConfig({
   shortcuts: {
     'flex-center': 'flex flex-justify-center flex-items-center',
     'flex-top-center': 'flex flex-justify-center',
+    // 'white-space': 'break-spaces',
   },
   safelist: ['r-ph-anchor-simple-thin'],
 }) as UserConfig<never>;

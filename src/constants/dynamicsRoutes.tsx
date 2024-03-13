@@ -1,6 +1,9 @@
 import LazyLoadComponent from '@components/LazyLoadComponent';
 import { Outlet } from 'react-router-dom';
 
+import errorRoutes from '@/router/modules/errorList';
+import whiteRoutes from '@/router/modules/whiteList';
+
 export const dynamicsRoutes: RouteWithMetaObject[] = [
   // {
   //   // id: 1,
@@ -20,7 +23,7 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
     element: <Outlet />,
     meta: {
       title: '用户',
-      icon: 'r-ph-anchor-simple-thin',
+      icon: 'i-material-symbols:person',
     },
     children: [
       {
@@ -29,9 +32,42 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
         path: 'list',
         meta: {
           title: '用户管理',
-          icon: 'r-ph-anchor-simple-thin',
+          icon: 'i-material-symbols:data-table',
         },
         element: LazyLoadComponent(lazy(() => import('@/views/user/list/index'))),
+      },
+      {
+        // id: 7,
+        id: 'UserDetail',
+        path: 'detail/:id',
+        meta: {
+          title: '用户详情',
+          icon: 'i-material-symbols:data-table',
+          hidden: true,
+        },
+        element: LazyLoadComponent(lazy(() => import('@/views/user/detail/index'))),
+      },
+      {
+        // id: 4,
+        id: 'UserExamRecord',
+        path: 'exam/:id',
+        meta: {
+          title: '用户评测记录',
+          icon: 'i-material-symbols:data-table',
+          hidden: true,
+        },
+        element: LazyLoadComponent(lazy(() => import('@/views/exam/list/index'))),
+      },
+      {
+        // id: 4,
+        id: 'UserExamDetail',
+        path: 'exam/detail/:id',
+        meta: {
+          title: '用户评测详情',
+          icon: 'i-material-symbols:data-table',
+          hidden: true,
+        },
+        element: LazyLoadComponent(lazy(() => import('@views/exam/detail/index'))),
       },
     ],
   },
@@ -42,7 +78,7 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
     element: <Outlet />,
     meta: {
       title: '评测',
-      icon: 'r-ph-anchor-simple-thin',
+      icon: 'i-material-symbols:clinical-notes-outline',
     },
     children: [
       {
@@ -52,7 +88,7 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
         params: { type: 1 },
         meta: {
           title: '评测管理',
-          icon: 'r-ph-anchor-simple-thin',
+          icon: 'i-material-symbols:data-table',
         },
         element: LazyLoadComponent(lazy(() => import('@/views/evaluation/list/index'))),
       },
@@ -63,7 +99,7 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
         params: { type: 2 },
         meta: {
           title: '自定义评测',
-          icon: 'r-ph-anchor-simple-thin',
+          icon: 'i-material-symbols:inbox-customize-sharp',
         },
         element: LazyLoadComponent(lazy(() => import('@/views/evaluation/list/index'))),
       },
@@ -86,7 +122,7 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
     element: <Outlet />,
     meta: {
       title: '管理员',
-      icon: 'r-ph-anchor-simple-thin',
+      icon: 'i-material-symbols:manage-accounts',
     },
     children: [
       {
@@ -95,7 +131,7 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
         path: 'list',
         meta: {
           title: '管理员列表',
-          icon: 'r-ph-anchor-simple-thin',
+          icon: 'i-material-symbols:data-table',
         },
         element: LazyLoadComponent(lazy(() => import('@/views/manager/list/index'))),
       },
@@ -111,4 +147,36 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
       },
     ],
   },
+  {
+    // id: 7,
+    id: 'Exam',
+    path: 'exam',
+    meta: {
+      title: '用户评测管理',
+      hidden: true,
+    },
+    element: <Outlet />,
+    children: [
+      {
+        // id: 5,
+        id: 'ExamDetail',
+        path: 'detail/:id',
+        // meta: {
+        //   title: '用户评测详情',
+        // },
+        element: LazyLoadComponent(lazy(() => import('@views/exam/detail/index'))),
+      },
+    ],
+  },
+];
+
+export const mockRoutes = [
+  ...whiteRoutes,
+  {
+    id: 'Root',
+    path: '/',
+    element: <Outlet />,
+    children: dynamicsRoutes,
+  },
+  ...errorRoutes,
 ];

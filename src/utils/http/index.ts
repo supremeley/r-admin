@@ -10,7 +10,7 @@ import type {
 import axios from 'axios';
 import qs from 'qs';
 
-import { ContentTypeEnum, RequestEnum, ResultEnum } from '@/enums';
+import { ContentTypeEnum, RequestEnum, ResponseType, ResultEnum } from '@/enums';
 import type { RootStore } from '@/store';
 
 let store: unknown;
@@ -49,6 +49,10 @@ export class AxiosRequest {
         console.log('response success', res);
         const { data, config } = res;
         const { code, message } = data;
+
+        if (config.responseType === ResponseType.Blob) {
+          return res;
+        }
 
         if (code === ResultEnum.SUCCESS) {
           return res;
@@ -136,12 +140,14 @@ export class AxiosRequest {
     console.log('handleNotify', code, message);
 
     switch (code) {
+      case 401:
       case 511:
         Message.error({
           content: message,
+          duration: 500,
           onClose: () => {
             // TODO:
-            window.location.href = '/login';
+            window.location.hash = 'login';
           },
         });
         break;
@@ -194,8 +200,6 @@ export class AxiosRequest {
         .request<unknown, AxiosResponse<SuccessResponse>>(conf)
         .then((res: AxiosResponse<SuccessResponse>) => {
           const { data } = res;
-
-          // TODO: if (config.responseType === 'blob') {
 
           resolve(data as unknown as Promise<T>);
         })

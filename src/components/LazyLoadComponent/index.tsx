@@ -6,7 +6,7 @@ const LazyLoadComponent = (Comp: React.LazyExoticComponent<() => JSX.Element>): 
     <Suspense
       fallback={
         <div className='w-full h-full flex-center'>
-          <Spin dot size={60} className='' />
+          <Spin block size={72} className='' />
         </div>
       }
     >

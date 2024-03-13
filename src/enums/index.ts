@@ -1,22 +1,15 @@
+export * from './evaluation';
 export * from './http';
+export * from './role';
+export * from './topic';
 
-export enum Gender {
-  Male = 1,
-  Female = 2,
-}
-
-export enum Status {
+export enum StatusEnum {
   Disable = 0,
   Enable = 1,
 }
 
-export enum ManagerType {
-  System = 1,
-  General = 2,
-}
-
-export enum TopicType {
-  Radio = 1,
-  Checkbox = 2,
-  Input = 3,
+export enum OperateModeEnum {
+  Create = 1,
+  Update = 2,
+  Delete = 3,
 }

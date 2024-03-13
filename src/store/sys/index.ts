@@ -2,9 +2,14 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 // import type { AuthRoute } from '@/api/sys/interface';
+// import { dynamicsRoutes } from '@/constants';
+// import { transfrom2Menu } from '@/utils';
+// import type { AuthRoute } from '@/api/sys/interface';
 import type { MenuItem, SySState } from './interface';
 
 const initialState: SySState = {
+  // menu: transfrom2Menu(dynamicsRoutes as AuthRoute[]),
+  // routes: dynamicsRoutes,
   menu: [],
   routes: [],
   history: [],

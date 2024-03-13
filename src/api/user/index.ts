@@ -15,6 +15,7 @@ enum Api {
   CreateUser = '/user/create',
   UpdateUser = '/user/update',
   DeleteUser = '/user/delete',
+  ExamRecordByUser = '/user/exam/record',
 }
 
 export const getUserList = (params: UserListParams) => {
@@ -35,4 +36,8 @@ export const updateUser = (params: OperateUserResult) => {
 
 export const deleteUser = (params: OperateUserResult) => {
   return useAxios.delete<SuccessResponse<OperateUserResult>>({ url: Api.DeleteUser, params });
+};
+
+export const getExamRecordByUser = (params: UserDetailParams) => {
+  return useAxios.get<SuccessResponse<User>>({ url: Api.ExamRecordByUser, params });
 };

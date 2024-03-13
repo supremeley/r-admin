@@ -12,13 +12,14 @@ import {
   Popconfirm,
   Switch,
   Table,
+  Tag,
   Tooltip,
 } from '@arco-design/web-react';
 import type { SorterInfo } from '@arco-design/web-react/es/Table/interface';
 
 import { manager } from '@/api';
 import type { EditorManager, Manager, ManagerFilter, OperateManagerResult } from '@/api/manager/interface';
-import { Gender, ManagerType, ResultEnum } from '@/enums';
+import { GenderEnum, ManagerTypeEnum, OperateModeEnum, ResultEnum } from '@/enums';
 import { useForm } from '@/hooks';
 import type { FormConfig } from '@/hooks/useForm/interface';
 
@@ -29,7 +30,7 @@ const ManagerList = () => {
   const columns: TableColumnProps<Manager>[] = [
     {
       title: 'ID',
-      width: 120,
+      width: 80,
       dataIndex: 'id',
       sorter: {
         compare: (a: Manager, b: Manager) => a.id - b.id,
@@ -37,7 +38,7 @@ const ManagerList = () => {
     },
     {
       title: '名称',
-      width: 180,
+      width: 240,
       dataIndex: 'username',
     },
     {
@@ -67,8 +68,8 @@ const ManagerList = () => {
       },
       render: (col) => (
         <>
-          {col === Gender.Male && <div className='r-material-symbols:female text-8' />}
-          {col === Gender.Female && <div className='r-material-symbols:male text-8' />}
+          {col === GenderEnum.Male && <div className='i-material-symbols:female text-8 color-blue' />}
+          {col === GenderEnum.Female && <div className='i-material-symbols:male text-8 color-red' />}
         </>
       ),
     },
@@ -81,8 +82,8 @@ const ManagerList = () => {
       },
       render: (col) => (
         <>
-          {col === ManagerType.System && <div>高级管理员</div>}
-          {col === ManagerType.General && <div>普通管理员</div>}
+          {col === ManagerTypeEnum.System && <Tag color='red'>高级管理员</Tag>}
+          {col === ManagerTypeEnum.General && <Tag color='orangered'>普通管理员</Tag>}
         </>
       ),
     },
@@ -96,7 +97,7 @@ const ManagerList = () => {
       render: (col, item) => (
         <Switch
           checked={col}
-          checkedIcon={<div className='r-material-symbols:check'></div>}
+          checkedIcon={<div className='i-material-symbols:check'></div>}
           onChange={() => handleSwitchStatus(item)}
         />
       ),
@@ -123,7 +124,7 @@ const ManagerList = () => {
               <Button
                 type='primary'
                 shape='circle'
-                icon={<div className='r-ph-anchor-simple-thin' />}
+                icon={<div className='i-material-symbols:patient-list-rounded'></div>}
                 onClick={() => handleOpenModal(2, item)}
               ></Button>
             </Tooltip>
@@ -133,14 +134,18 @@ const ManagerList = () => {
               <Button
                 type='primary'
                 shape='circle'
-                icon={<div className='r-ph-anchor-simple-thin' />}
+                icon={<div className='i-material-symbols:list-alt-outline-rounded'></div>}
                 onClick={() => jumpToDetail(item.id)}
               ></Button>
             </Tooltip>
           </Col>
           <Col span={6}>
             <Tooltip content='操作记录'>
-              <Button type='primary' shape='circle' icon={<div className='r-ph-anchor-simple-thin' />}></Button>
+              <Button
+                type='primary'
+                shape='circle'
+                icon={<div className='i-material-symbols:deployed-code-history-outline'></div>}
+              ></Button>
             </Tooltip>
           </Col>
           <Col span={6}>
@@ -160,7 +165,7 @@ const ManagerList = () => {
                   type='primary'
                   shape='circle'
                   status='danger'
-                  icon={<div className='r-ph-anchor-simple-thin' />}
+                  icon={<div className='i-material-symbols:delete-rounded'></div>}
                 ></Button>
               </Tooltip>
             </Popconfirm>
@@ -217,62 +222,61 @@ const ManagerList = () => {
     // },
     formItems: [
       {
-        formItemType: 'input',
-        label: '管理员名称',
-        field: 'username',
-        placeholder: '请输入管理员名称',
-        allowClear: true,
+        component: 'input',
+        formItemProps: { label: '管理员名称', field: 'username' },
+        componentProps: {
+          placeholder: '请输入管理员名称',
+          allowClear: true,
+        },
       },
       {
-        formItemType: 'input',
-        label: '手机号',
-        field: 'mobile',
-        placeholder: '请输入手机号',
-        allowClear: true,
+        component: 'input',
+        formItemProps: { label: '手机号', field: 'mobile' },
+        componentProps: { placeholder: '请输入手机号', allowClear: true },
       },
       {
-        formItemType: 'checkbox',
-        label: '性别',
-        field: 'gender',
-        initialValue: [1, 2],
-        options: [
-          { label: '男', value: 1 },
-          { label: '女', value: 2 },
-        ],
+        component: 'checkbox',
+        formItemProps: { label: '性别', field: 'gender', initialValue: [1, 2] },
+        componentProps: {
+          options: [
+            { label: '男', value: 1 },
+            { label: '女', value: 2 },
+          ],
+        },
       },
       {
-        formItemType: 'checkbox',
-        label: '类型',
-        field: 'type',
-        initialValue: [1, 2],
-        options: [
-          { label: '高级', value: 1 },
-          { label: '普通', value: 2 },
-        ],
+        component: 'checkbox',
+        formItemProps: { label: '类型', field: 'type', initialValue: [1, 2] },
+        componentProps: {
+          options: [
+            { label: '高级', value: 1 },
+            { label: '普通', value: 2 },
+          ],
+        },
       },
       {
-        formItemType: 'checkbox',
-        label: '状态',
-        field: 'status',
-        initialValue: [1, 0],
-        options: [
-          { label: '启用', value: 1 },
-          { label: '禁用', value: 0 },
-        ],
+        component: 'checkbox',
+        formItemProps: { label: '状态', field: 'status', initialValue: [1, 0] },
+        componentProps: {
+          options: [
+            { label: '启用', value: 1 },
+            { label: '禁用', value: 0 },
+          ],
+        },
       },
     ],
     formButtons: [
       {
         name: '重置',
         htmlType: 'reset',
-        icon: <div className='r-ph-anchor-simple-thin' />,
+        icon: <div className='i-material-symbols:device-reset'></div>,
         onClick: handleReset,
       },
       {
         name: '查询',
         htmlType: 'button',
         type: 'primary',
-        icon: <div className='r-ph-anchor-simple-thin' />,
+        icon: <div className='i-material-symbols:search'></div>,
         onClick: handleSearch,
       },
     ],
@@ -292,7 +296,7 @@ const ManagerList = () => {
     item.status = !item.status;
     // setCurrentItem(item);
 
-    await fetchOperate(2, item);
+    await fetchOperate(OperateModeEnum.Update, item);
   };
 
   const handleTableChange = (pagination: PaginationProps, sorter: SorterInfo | SorterInfo[]) => {
@@ -332,7 +336,7 @@ const ManagerList = () => {
 
   const [visible, setVisible] = useState(false);
   const [currentItem, setCurrentItem] = useState<Manager | null>(null);
-  const [mode, setMode] = useState(1);
+  const [mode, setMode] = useState<OperateModeEnum>(OperateModeEnum.Create);
 
   const editorFormConfig: FormConfig = {
     autoComplete: 'off',
@@ -340,73 +344,64 @@ const ManagerList = () => {
     wrapperCol: { span: 18 },
     formItems: [
       {
-        formItemType: 'uploadPhoto',
-        label: '上传头像',
-        field: 'avatar',
-        accept: '.jpg, .jpeg, .png',
-        triggerPropName: 'fileList',
-        listType: 'picture-card',
-        limit: 1,
+        component: 'uploadPhoto',
+        formItemProps: { label: '上传头像', field: 'avatar', triggerPropName: 'fileList' },
+        componentProps: { listType: 'picture-card', accept: '.jpg, .jpeg, .png', limit: 1 },
       },
       {
-        formItemType: 'input',
-        label: '管理员名称',
-        field: 'username',
-        placeholder: '请输入管理员名称',
-        rules: [{ required: true, message: '请输入管理员名称' }],
+        component: 'input',
+        formItemProps: {
+          label: '管理员名称',
+          field: 'username',
+          rules: [{ required: true, message: '请输入管理员名称' }],
+        },
+        componentProps: { placeholder: '请输入管理员名称' },
       },
       {
-        formItemType: 'inputNumber',
-        label: '手机号',
-        field: 'mobile',
-        placeholder: '请输入手机号',
-        rules: [{ required: true, message: '请输入手机号' }],
+        component: 'inputNumber',
+        formItemProps: { label: '手机号', field: 'mobile', rules: [{ required: true, message: '请输入手机号' }] },
+        componentProps: { placeholder: '请输入手机号' },
       },
       {
-        formItemType: 'radio',
-        label: '性别',
-        field: 'gender',
-        initialValue: 1,
-        options: [
-          { label: '男', value: 1 },
-          { label: '女', value: 2 },
-        ],
+        component: 'radio',
+        formItemProps: { label: '性别', field: 'gender', initialValue: 1 },
+        componentProps: {
+          options: [
+            { label: '男', value: 1 },
+            { label: '女', value: 2 },
+          ],
+        },
       },
       {
-        formItemType: 'radio',
-        label: '类型',
-        field: 'type',
-        initialValue: 1,
-        options: [
-          { label: '高级管理员', value: 1 },
-          { label: '普通管理员', value: 2 },
-        ],
+        component: 'radio',
+        formItemProps: { label: '类型', field: 'type', initialValue: 1 },
+        componentProps: {
+          options: [
+            { label: '高级管理员', value: 1 },
+            { label: '普通管理员', value: 2 },
+          ],
+        },
       },
       {
-        formItemType: 'switch',
-        label: '状态',
-        field: 'status',
-        initialValue: true,
-        triggerPropName: 'checked',
+        component: 'switch',
+        formItemProps: { label: '是否开启', field: 'status', initialValue: true, triggerPropName: 'checked' },
       },
       {
-        formItemType: 'textarea',
-        label: '说明',
-        field: 'describe',
-        autoSize: { minRows: 2 },
+        component: 'textarea',
+        formItemProps: { label: '说明', field: 'describe' },
+        componentProps: { autoSize: { minRows: 2 } },
       },
       {
-        formItemType: 'textarea',
-        label: '备注',
-        field: 'remark',
-        autoSize: { minRows: 2 },
+        component: 'textarea',
+        formItemProps: { label: '备注', field: 'remark' },
+        componentProps: { autoSize: { minRows: 2 } },
       },
     ],
   };
 
   const [EditorForm, editorFormRef] = useForm<EditorManager>(editorFormConfig);
 
-  const handleOpenModal = (mode: number, data?: Manager) => {
+  const handleOpenModal = (mode: OperateModeEnum, data?: Manager) => {
     setVisible(true);
     setMode(mode);
 
@@ -447,10 +442,10 @@ const ManagerList = () => {
   const handleDelete = async (data: Manager) => {
     // setCurrentItem(data);
 
-    await fetchOperate(3, data);
+    await fetchOperate(OperateModeEnum.Delete, data);
   };
 
-  const fetchOperate = async (mode: number, data: Manager) => {
+  const fetchOperate = async (mode: OperateModeEnum, data: Manager) => {
     let params: OperateManagerResult = {
       ...data,
       id: data.id ?? currentItem?.id,
@@ -461,15 +456,15 @@ const ManagerList = () => {
       msg = '';
 
     switch (mode) {
-      case 1:
+      case OperateModeEnum.Create:
         api = manager.createManager;
         msg = '新增成功';
         break;
-      case 2:
+      case OperateModeEnum.Update:
         api = manager.updateManager;
         msg = '更新成功';
         break;
-      case 3:
+      case OperateModeEnum.Delete:
         api = manager.deleteManager;
         params = { id: data.id };
         msg = '删除成功';
@@ -525,7 +520,7 @@ const ManagerList = () => {
             <Button
               type='primary'
               htmlType='button'
-              icon={<div className='r-ph-anchor-simple-thin' />}
+              icon={<div className='i-material-symbols:add'></div>}
               style={{ width: '100%' }}
               onClick={() => handleOpenModal(1)}
             >
@@ -548,7 +543,7 @@ const ManagerList = () => {
         </Card>
       </section>
       <Modal
-        title={(mode === 1 ? '新增' : '编辑') + '管理员'}
+        title={(mode === OperateModeEnum.Create ? '新增' : '编辑') + '管理员'}
         visible={visible}
         autoFocus={false}
         focusLock={true}

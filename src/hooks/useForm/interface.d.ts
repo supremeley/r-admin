@@ -12,24 +12,27 @@ import type {
   UploadProps,
 } from '@arco-design/web-react';
 
-export type FormItemConfig =
-  | (FormItemProps & InputProps & { formItemType: 'input'; span?: number })
-  | (FormItemProps & InputNumberProps & { formItemType: 'inputNumber'; span?: number })
-  | (FormItemProps & TextAreaProps & { formItemType: 'textarea' })
-  | (FormItemProps & SwitchProps & { formItemType: 'switch'; span?: number })
-  | (FormItemProps & RadioGroupProps & { formItemType: 'radio'; span?: number })
-  | (FormItemProps & CheckboxGroupProps<string | number> & { formItemType: 'checkbox'; span?: number })
-  | (FormItemProps & DatePickerProps & { formItemType: 'datePicker'; span?: number })
-  | (FormItemProps & UploadProps & { formItemType: 'uploadPhoto'; span?: number });
+interface ComponentProps {
+  input: InputProps;
+  inputNumber: InputNumberProps;
+  textarea: TextAreaProps;
+  switch: SwitchProps;
+  radio: RadioGroupProps;
+  checkbox: CheckboxGroupProps<string | number>;
+  datePicker: DatePickerProps;
+  uploadPhoto: UploadProps;
+}
 
-//     | 'inputNumber'
-//     | 'select'
-//     | 'datepicker'
+export interface FormItemConfig {
+  formItemProps: FormItemProps;
+  component: keyof ComponentProps;
+  componentProps?: ComponentProps[keyof ComponentProps];
+  watch?: WatchConfig;
+}
+// TODO:
 //     | 'timepicker'
-//     | 'switch'
 //     | 'slider'
 //     | 'rate'
-//     | 'upload'
 //     | 'cascader'
 //     | 'treeSelect'
 //     | 'transfer'
@@ -40,6 +43,12 @@ export type FormItemConfig =
 export type FormButtonConfig = ButtonProps & {
   name: string;
 };
+
+export interface WatchConfig {
+  field: string;
+  depend: string;
+  condition: (p: unknown) => boolean;
+}
 
 export interface FormConfig extends FormProps {
   formItems: FormItemConfig[];

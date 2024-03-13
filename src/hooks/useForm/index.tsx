@@ -15,11 +15,13 @@ import { Button, Checkbox, DatePicker, Form, Input, InputNumber, Radio, Switch, 
 import { omit } from 'lodash-es';
 
 import { file as fileUploadApi } from '@/api';
+import { ResultEnum } from '@/enums';
 
-import { FormButtonContainer, FormColContainer, FormRowContainer } from './components';
+import { FormButtonContainer, FormColContainer, FormItemContainer, FormRowContainer } from './components';
 import type { FormConfig } from './interface';
 
 export function useForm<T = unknown>(formConfig: FormConfig): [() => JSX.Element, FormInstance<T>] {
+  // export function useForm(formConfig: FormConfig): [() => JSX.Element, FormInstance] {
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
   const RadioGroup = Radio.Group;
@@ -42,101 +44,99 @@ export function useForm<T = unknown>(formConfig: FormConfig): [() => JSX.Element
       offsetMultiple = formItems.length % baseColNum;
     }
 
+    // const { field, depend, condition } = watch!;
+    // const d = Form.useWatch(depend, formInstance as unknown as FormInstance);
+
     return (
       <Form form={formInstance as unknown as FormInstance} {...formProps} className='use-form-container'>
         <FormRowContainer isInLine={isInLine}>
           {formItems.map((item) => {
-            const formItemProps = omit(item, [
-              'allowClear',
-              'span',
-              'formItemType',
-              'autoSize',
-              'defaultValue',
-              'listType',
-            ]);
-            const inputProps = omit(item, [
-              'allowClear',
-              'span',
-              'formItemType',
-              'initialValue',
-              'field',
-              'triggerPropName',
-            ]);
+            const { formItemProps, componentProps, component, watch } = item;
+            // const { field } = watch;
+
+            // if (field === formItemProps.field && d && !condition(d)) {
+            //   return null;
+            // }
 
             return (
               // TODO: FormItem必须直接包裹在表单控件外，并且表单控件是 FormItem 的唯一子节点
-              <FormColContainer isInLine={isInLine} baseColWidth={baseColWidth} key={item.field as string}>
-                <>
-                  {item.formItemType === 'input' && (
-                    <FormItem {...formItemProps}>
-                      <Input {...(inputProps as InputProps)} />
-                    </FormItem>
-                  )}
-                  {item.formItemType === 'inputNumber' && (
-                    <FormItem {...formItemProps}>
-                      <InputNumber {...(inputProps as InputNumberProps)} />
-                    </FormItem>
-                  )}
-                  {item.formItemType === 'textarea' && (
-                    <FormItem {...formItemProps}>
-                      <TextArea {...(inputProps as TextAreaProps)} />
-                    </FormItem>
-                  )}
-                  {item.formItemType === 'switch' && (
-                    <FormItem {...formItemProps}>
-                      <Switch
-                        {...(inputProps as SwitchProps)}
-                        checkedIcon={<div className='r-material-symbols:check'></div>}
-                      />
-                    </FormItem>
-                  )}
-                  {item.formItemType === 'radio' && (
-                    <FormItem {...formItemProps}>
-                      <RadioGroup {...(inputProps as RadioGroupProps)} />
-                    </FormItem>
-                  )}
-                  {item.formItemType === 'checkbox' && (
-                    <FormItem {...formItemProps}>
-                      <CheckboxGroup {...(inputProps as CheckboxGroupProps<string>)} />
-                    </FormItem>
-                  )}
-                  {item.formItemType === 'datePicker' && (
-                    <FormItem {...formItemProps}>
-                      <DatePicker {...(inputProps as DatePickerProps)} />
-                    </FormItem>
-                  )}
-                  {item.formItemType === 'uploadPhoto' && (
-                    <FormItem {...formItemProps}>
-                      <Upload
-                        {...(inputProps as UploadProps)}
-                        customRequest={async (option) => {
-                          const { onProgress, onError, onSuccess, file } = option;
+              <FormColContainer isInLine={isInLine} baseColWidth={baseColWidth} key={formItemProps.field as string}>
+                <FormItemContainer
+                  needUpdate={watch?.field ? watch?.field === formItemProps.field : false}
+                  watch={watch}
+                >
+                  <>
+                    {component === 'input' && (
+                      <FormItem {...formItemProps}>
+                        <Input {...(componentProps as InputProps)} />
+                      </FormItem>
+                    )}
+                    {component === 'inputNumber' && (
+                      <FormItem {...formItemProps}>
+                        <InputNumber {...(componentProps as InputNumberProps)} />
+                      </FormItem>
+                    )}
+                    {component === 'textarea' && (
+                      <FormItem {...formItemProps}>
+                        <TextArea {...(componentProps as TextAreaProps)} />
+                      </FormItem>
+                    )}
+                    {component === 'switch' && (
+                      <FormItem {...formItemProps}>
+                        <Switch
+                          {...(componentProps as SwitchProps)}
+                          checkedIcon={<div className='i-material-symbols:check'></div>}
+                        />
+                      </FormItem>
+                    )}
+                    {component === 'radio' && (
+                      <FormItem {...formItemProps}>
+                        <RadioGroup {...(componentProps as RadioGroupProps)} />
+                      </FormItem>
+                    )}
+                    {component === 'checkbox' && (
+                      <FormItem {...formItemProps}>
+                        <CheckboxGroup {...(componentProps as CheckboxGroupProps<string>)} />
+                      </FormItem>
+                    )}
+                    {component === 'datePicker' && (
+                      <FormItem {...formItemProps}>
+                        <DatePicker {...(componentProps as DatePickerProps)} />
+                      </FormItem>
+                    )}
+                    {component === 'uploadPhoto' && (
+                      <FormItem {...formItemProps}>
+                        <Upload
+                          {...(componentProps as UploadProps)}
+                          customRequest={async (option) => {
+                            const { onProgress, onError, onSuccess, file } = option;
 
-                          try {
-                            const { code, result } = await fileUploadApi.fileUpload({ file }, (event) => {
-                              if (event.total) {
-                                let percent;
-                                if (event.total > 0) {
-                                  percent = (event.loaded / event.total) * 100;
+                            try {
+                              const { code, result } = await fileUploadApi.fileUpload({ file }, (event) => {
+                                if (event.total) {
+                                  let percent;
+                                  if (event.total > 0) {
+                                    percent = (event.loaded / event.total) * 100;
+                                  }
+
+                                  onProgress(parseInt(String(percent), 10));
                                 }
+                              });
 
-                                onProgress(parseInt(String(percent), 10));
+                              if (code === ResultEnum.SUCCESS) {
+                                onSuccess(result);
+                              } else {
+                                onError();
                               }
-                            });
-
-                            if (code === 200) {
-                              onSuccess(result);
-                            } else {
-                              onError();
+                            } catch (e) {
+                              onError(e as object);
                             }
-                          } catch (e) {
-                            onError(e as object);
-                          }
-                        }}
-                      ></Upload>
-                    </FormItem>
-                  )}
-                </>
+                          }}
+                        ></Upload>
+                      </FormItem>
+                    )}
+                  </>
+                </FormItemContainer>
               </FormColContainer>
             );
           })}

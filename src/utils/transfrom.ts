@@ -1,7 +1,7 @@
-import type { MenuItem } from '@store/sys/interface';
 import qs from 'qs';
 
 import type { AuthRoute } from '@/api/sys/interface';
+import type { MenuItem } from '@/store/sys/interface';
 
 export const transfrom2Menu = (routes: AuthRoute[], path = ''): MenuItem[] => {
   if (!routes?.length) return [];

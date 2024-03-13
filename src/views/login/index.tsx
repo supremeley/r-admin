@@ -11,6 +11,8 @@ const FormItem = Form.Item;
 const InputPassword = Input.Password;
 
 const Login = () => {
+  // const navigate = useNavigate();
+
   const [{ login: authLogin, loading }] = useAuth();
 
   const formRef = useRef<FormInstance<LoginParams>>(null);
@@ -20,6 +22,9 @@ const Login = () => {
       try {
         const res = await formRef.current.validate();
         await authLogin(res);
+        // setTimeout(() => {
+        //   navigate('/user', { replace: true });
+        // }, 1000);
       } catch (_) {
         console.log(formRef.current.getFieldsError());
         // Message.error('校验失败，请检查字段！');

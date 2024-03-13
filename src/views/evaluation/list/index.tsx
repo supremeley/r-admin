@@ -18,7 +18,7 @@ import qs from 'qs';
 
 import { evaluation } from '@/api';
 import type { Evaluation, EvaluationFilter, EvaluationListParams } from '@/api/evaluation/interface';
-import { ResultEnum } from '@/enums';
+import { OperateModeEnum, ResultEnum } from '@/enums';
 import { useForm } from '@/hooks';
 import type { FormConfig } from '@/hooks/useForm/interface';
 
@@ -50,7 +50,7 @@ const EvaluationList = () => {
       render: (col, item) => (
         <Switch
           checked={col}
-          checkedIcon={<div className='r-material-symbols:check'></div>}
+          checkedIcon={<div className='i-material-symbols:check'></div>}
           onChange={() => handleSwitchStatus(item)}
         />
       ),
@@ -77,7 +77,7 @@ const EvaluationList = () => {
               <Button
                 type='primary'
                 shape='circle'
-                icon={<div className='r-ph-anchor-simple-thin' />}
+                icon={<div className='i-material-symbols:edit-document-outline-sharp'></div>}
                 onClick={() => handleOpenModal(2, item)}
               ></Button>
             </Tooltip>
@@ -87,14 +87,18 @@ const EvaluationList = () => {
               <Button
                 type='primary'
                 shape='circle'
-                icon={<div className='r-ph-anchor-simple-thin' />}
+                icon={<div className='i-material-symbols:list-alt-outline-rounded'></div>}
                 onClick={() => jumpToDetail(item.id)}
               ></Button>
             </Tooltip>
           </Col>
           <Col span={6}>
             <Tooltip content='记录'>
-              <Button type='primary' shape='circle' icon={<div className='r-ph-anchor-simple-thin' />}></Button>
+              <Button
+                type='primary'
+                shape='circle'
+                icon={<div className='i-material-symbols:deployed-code-history-outline'></div>}
+              ></Button>
             </Tooltip>
           </Col>
           <Col span={6}>
@@ -114,7 +118,7 @@ const EvaluationList = () => {
                   type='primary'
                   shape='circle'
                   status='danger'
-                  icon={<div className='r-ph-anchor-simple-thin' />}
+                  icon={<div className='i-material-symbols:delete-rounded'></div>}
                 ></Button>
               </Tooltip>
             </Popconfirm>
@@ -124,8 +128,23 @@ const EvaluationList = () => {
     },
   ];
 
+  const parseLocation = (key: string) => {
+    if (location.search) {
+      const query = qs.parse(location.search.substring(1));
+      return query[key] ?? 0;
+    }
+
+    return 0;
+  };
+
   const location = useLocation();
-  const [type, setType] = useState(0);
+  const [type, setType] = useState(Number(parseLocation('type')));
+
+  useEffect(() => {
+    if (type !== Number(parseLocation('type'))) {
+      setType(Number(parseLocation('type')));
+    }
+  }, [location]);
 
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
@@ -133,13 +152,6 @@ const EvaluationList = () => {
   const [list, setList] = useState<Evaluation[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [filter, setFilter] = useState<EvaluationFilter | null>(null);
-
-  useEffect(() => {
-    if (location.search) {
-      const query = qs.parse(location.search.substring(1));
-      setType(query.type as unknown as number);
-    }
-  }, [location]);
 
   useEffect(() => {
     void fetchData(page, limit);
@@ -175,26 +187,26 @@ const EvaluationList = () => {
     wrapperCol: { span: 16 },
     formItems: [
       {
-        formItemType: 'input',
-        label: '评测名称',
-        field: 'name',
-        placeholder: '请输入评测名称',
-        allowClear: true,
-        span: 12,
+        component: 'input',
+        formItemProps: { label: '评测名称', field: 'name' },
+        componentProps: {
+          placeholder: '请输入评测名称',
+          allowClear: true,
+        },
       },
     ],
     formButtons: [
       {
         name: '重置',
         htmlType: 'reset',
-        icon: <div className='r-ph-anchor-simple-thin' />,
+        icon: <div className='i-material-symbols:device-reset'></div>,
         onClick: handleReset,
       },
       {
         name: '查询',
         htmlType: 'button',
         type: 'primary',
-        icon: <div className='r-ph-anchor-simple-thin' />,
+        icon: <div className='i-material-symbols:search'></div>,
         onClick: handleSearch,
       },
     ],
@@ -214,7 +226,7 @@ const EvaluationList = () => {
     item.status = !item.status;
     // setCurrentItem(item);
 
-    await fetchOperate(2, item);
+    await fetchOperate(OperateModeEnum.Update, item);
   };
 
   const handleTableChange = (pagination: PaginationProps, sorter: SorterInfo | SorterInfo[]) => {
@@ -237,10 +249,7 @@ const EvaluationList = () => {
       limit,
     };
 
-    // filter && (params = { ...params, ...filter });
-    // type && (params = { ...params, type: type ? Number(type) : 0 });
-
-    Object.assign(params, { ...filter }, { type: type ? Number(type) : 0 });
+    Object.assign(params, { ...filter }, { type: type ?? 0 });
 
     try {
       const { code, result } = await evaluation.getEvaluationList(params);
@@ -265,21 +274,33 @@ const EvaluationList = () => {
     wrapperCol: { span: 18 },
     formItems: [
       {
-        formItemType: 'input',
-        label: '评测名称',
-        field: 'name',
-        placeholder: '请输入评测名称',
-        rules: [{ required: true, message: '请输入名称' }],
+        component: 'input',
+        formItemProps: {
+          label: '评测名称',
+          field: 'name',
+          rules: [{ required: true, message: '请输入名称' }],
+        },
+        componentProps: {
+          placeholder: '请输入评测名称',
+        },
       },
       {
-        formItemType: 'input',
-        label: '说明',
-        field: 'describe',
+        component: 'textarea',
+        formItemProps: {
+          label: '说明',
+          field: 'describe',
+        },
+        componentProps: {
+          rows: 3,
+        },
       },
       {
-        formItemType: 'input',
-        label: '备注',
-        field: 'remark',
+        component: 'switch',
+        formItemProps: { label: '是否启用', field: 'status', initialValue: true, triggerPropName: 'checked' },
+      },
+      {
+        component: 'input',
+        formItemProps: { label: '备注', field: 'remark' },
       },
     ],
   };
@@ -319,7 +340,7 @@ const EvaluationList = () => {
   const handleDelete = async (data: Evaluation) => {
     setCurrentItem(data);
 
-    await fetchOperate(3, data);
+    await fetchOperate(OperateModeEnum.Delete, data);
   };
 
   const fetchOperate = async (mode: number, data: Evaluation) => {
@@ -396,7 +417,7 @@ const EvaluationList = () => {
             <Button
               type='primary'
               htmlType='button'
-              icon={<div className='r-ph-anchor-simple-thin' />}
+              icon={<div className='i-material-symbols:add'></div>}
               style={{ width: '100%' }}
               onClick={() => handleOpenModal(1)}
             >

@@ -27,3 +27,7 @@ dist-ssr
 *.sln
 *.sw?
 vite.config.ts.*
+
+# env config
+.env
+.env.*

@@ -3,7 +3,11 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "skipLibCheck": true,
     /* Bundler mode */
@@ -21,22 +25,55 @@
     "verbatimModuleSyntax": true,
     "baseUrl": ".",
     "paths": {
-      "@assets/*": ["src/assets/*"],
-      "@components/*": ["src/components/*"],
-      "@constants/*": ["src/constants/*"],
-      "@layout/*": ["src/layout/*"],
-      "@router/*": ["src/router/*"],
-      "@store/*": ["src/store/*"],
-      "@utils/*": ["src/utils/*"],
-      "@views/*": ["src/views/*"],
-      "@/*": ["src/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@api/*": ["src/api/*"],
-      "@enums/*": ["src/enums/*"]
+      "@assets/*": [
+        "src/assets/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@constants/*": [
+        "src/constants/*"
+      ],
+      "@layout/*": [
+        "src/layout/*"
+      ],
+      "@router/*": [
+        "src/router/*"
+      ],
+      "@store/*": [
+        "src/store/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@views/*": [
+        "src/views/*"
+      ],
+      "@/*": [
+        "src/*"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
+      "@api/*": [
+        "src/api/*"
+      ],
+      "@enums/*": [
+        "src/enums/*"
+      ]
     }
   },
-  "include": ["src/**/*.js", "src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "config", "types"],
-  "exclude": ["dist"],
+  "include": [
+    "src/**/*.js",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
+    "config",
+    "types"
+  ],
+  "exclude": [
+    "dist"
+  ],
   "references": [
     {
       "path": "./tsconfig.node.json"

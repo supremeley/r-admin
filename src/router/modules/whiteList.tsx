@@ -8,11 +8,11 @@ const router: RouteWithMetaObject[] = [
   {
     // id: 1,
     id: 'Home',
-    path: '/home',
+    path: '/',
     element: <Navigate to='/user/list' />,
     meta: {
       title: '首页',
-      icon: 'r-ph-anchor-simple-thin',
+      // icon: 'r-ph-anchor-simple-thin',
       hidden: true,
     },
   },
@@ -24,6 +24,8 @@ const router: RouteWithMetaObject[] = [
       title: '登录',
     },
   },
+  // ...dynamicsRoutes,
+  // ...errorRoutes,
 ];
 
 export default router;

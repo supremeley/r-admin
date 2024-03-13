@@ -2,15 +2,16 @@ import { Message, Notification } from '@arco-design/web-react';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+// import { redirect } from 'react-router-dom';
 import { auth as authApi } from '@/api';
 import type { Auth, LoginParams } from '@/api/auth/interface';
-import type { AuthRoute } from '@/api/sys/interface';
-import { dynamicsRoutes } from '@/constants';
+// import type { AuthRoute } from '@/api/sys/interface';
+// import { dynamicsRoutes } from '@/constants';
 import { ResultEnum } from '@/enums';
 import { store } from '@/store';
 import { setToken, setUserinfo } from '@/store/auth';
-import { setMenu, setRoutes } from '@/store/sys';
-import { transfrom2Menu } from '@/utils';
+// import { setMenu, setRoutes } from '@/store/sys';
+// import { transfrom2Menu } from '@/utils';
 
 export const useAuth = (): [
   {
@@ -36,8 +37,10 @@ export const useAuth = (): [
       setAuth(result);
       dispatch(setUserinfo(userinfo));
       dispatch(setToken(token));
-      dispatch(setRoutes(dynamicsRoutes));
-      dispatch(setMenu(transfrom2Menu(dynamicsRoutes as AuthRoute[])));
+
+      // TODO: 后期改为后端注入
+      // dispatch(setRoutes(dynamicsRoutes));
+      // dispatch(setMenu(transfrom2Menu(dynamicsRoutes as AuthRoute[])));
 
       Message.success({
         content: '登录成功',
@@ -45,9 +48,10 @@ export const useAuth = (): [
         onClose: () => {
           setLoading(false);
 
-          // setTimeout(() => {
-          navigate('/home', { replace: true });
-          // }, 1000);
+          // TODO:
+          // redirect('/user/list');
+          // navigate('/user/list', { replace: true });
+          window.location.href = '/user/list';
 
           const hour = new Date().getHours();
 

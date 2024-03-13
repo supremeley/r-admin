@@ -1,13 +1,5 @@
-// import { vitePluginForArco } from '@arco-plugins/vite-react';
-// import UnoCSS from 'unocss/vite';
-// import { visualizer } from 'rollup-plugin-visualizer';
-// import AutoImport from 'unplugin-auto-import/vite';
 import { ConfigEnv, defineConfig, loadEnv, UserConfig } from 'vite';
 
-// import { ViteAliases } from 'vite-aliases';
-// import compressPlugin from 'vite-plugin-compression';
-// import viteImagemin from 'vite-plugin-imagemin';
-// import Pages from 'vite-plugin-pages';
 import { createPlugins } from './config/plugins';
 
 // https://vitejs.dev/config/
@@ -25,7 +17,8 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => {
   });
 
   return {
-    base: '/',
+    // base: '/work',
+    base: './',
     build: {
       // minify: 'terser',
       rollupOptions: {

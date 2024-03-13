@@ -26,9 +26,7 @@ const Layout = () => {
         </Sider>
         <Content className='layout-content'>
           <LayoutContent></LayoutContent>
-          <Footer className='layout-footer'>
-            <section className='footer'>Footer</section>
-          </Footer>
+          <Footer className='layout-footer'>{/* <section className='footer'>Footer</section> */}</Footer>
         </Content>
       </ArcoLayout>
     </ArcoLayout>

@@ -9,6 +9,7 @@ import { ViteAliases } from 'vite-aliases';
 import compressPlugin from 'vite-plugin-compression';
 import viteImagemin from 'vite-plugin-imagemin';
 import Pages from 'vite-plugin-pages';
+import topLevelAwait from 'vite-plugin-top-level-await';
 
 interface Options {
   isBuild: boolean;
@@ -43,6 +44,12 @@ export const createPlugins = ({ isUseSWC, isBuild, enableAnalyze }: Options): Pl
     Pages({
       dirs: ['src/views'],
       importMode: 'async',
+    }),
+    topLevelAwait({
+      // The export name of top-level await promise for each chunk module
+      promiseExportName: '__tla',
+      // The function to generate import names of top-level await promise in each chunk module
+      promiseImportName: (i) => `__tla_${i}`,
     }),
   ];
 

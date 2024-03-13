@@ -10,7 +10,7 @@ import {
   Modal,
   PageHeader,
   Popconfirm,
-  Switch,
+  // Switch,
   Table,
   Tooltip,
 } from '@arco-design/web-react';
@@ -19,8 +19,7 @@ import dayjs from 'dayjs';
 
 import { user } from '@/api';
 import type { User, UserFilter } from '@/api/user/interface';
-import { Gender } from '@/enums';
-import { ResultEnum } from '@/enums/http';
+import { GenderEnum, OperateModeEnum, ResultEnum } from '@/enums';
 import { useForm } from '@/hooks';
 import type { FormConfig } from '@/hooks/useForm/interface';
 
@@ -32,7 +31,7 @@ const UserList = () => {
   const columns: TableColumnProps<UserTableModel>[] = [
     {
       title: 'ID',
-      width: 120,
+      width: 80,
       dataIndex: 'id',
       sorter: {
         compare: (a: UserTableModel, b: UserTableModel) => a.id - b.id,
@@ -40,14 +39,9 @@ const UserList = () => {
     },
     {
       title: '名称',
-      width: 180,
+      width: 120,
       dataIndex: 'username',
     },
-    // {
-    //   title: '微信名',
-    //   width: 180,
-    //   dataIndex: 'wechatName',
-    // },
     {
       title: '头像',
       width: 120,
@@ -75,8 +69,8 @@ const UserList = () => {
       },
       render: (col) => (
         <>
-          {col === Gender.Male && <div className='r-material-symbols:female text-8' />}
-          {col === Gender.Female && <div className='r-material-symbols:male text-8' />}
+          {col === GenderEnum.Male && <div className='i-material-symbols:female text-8 color-blue' />}
+          {col === GenderEnum.Female && <div className='i-material-symbols:male text-8 color-red' />}
         </>
       ),
     },
@@ -88,21 +82,21 @@ const UserList = () => {
         compare: (a: UserTableModel, b: UserTableModel) => (a.age ?? 0) - (b.age ?? 0),
       },
     },
-    {
-      title: '状态',
-      width: 120,
-      dataIndex: 'status',
-      sorter: {
-        compare: (a: UserTableModel) => (a.status ? 1 : -1),
-      },
-      render: (col, item) => (
-        <Switch
-          checked={col}
-          checkedIcon={<div className='r-material-symbols:check'></div>}
-          onChange={() => handleSwitchStatus(item)}
-        />
-      ),
-    },
+    // {
+    //   title: '状态',
+    //   width: 120,
+    //   dataIndex: 'status',
+    //   sorter: {
+    //     compare: (a: UserTableModel) => (a.status ? 1 : -1),
+    //   },
+    //   render: (col, item) => (
+    //     <Switch
+    //       checked={col}
+    //       checkedIcon={<div className='i-material-symbols:check'></div>}
+    //       onChange={() => handleSwitchStatus(item)}
+    //     />
+    //   ),
+    // },
     {
       title: '说明',
       width: 240,
@@ -125,7 +119,7 @@ const UserList = () => {
               <Button
                 type='primary'
                 shape='circle'
-                icon={<div className='r-ph-anchor-simple-thin' />}
+                icon={<div className='i-material-symbols:patient-list-rounded'></div>}
                 onClick={() => handleOpenModal(2, item)}
               ></Button>
             </Tooltip>
@@ -135,16 +129,31 @@ const UserList = () => {
               <Button
                 type='primary'
                 shape='circle'
-                icon={<div className='r-ph-anchor-simple-thin' />}
+                icon={<div className='i-material-symbols:list-alt-outline-rounded'></div>}
                 onClick={() => jumpToDetail(item.id)}
               ></Button>
             </Tooltip>
           </Col>
           <Col span={6}>
-            <Tooltip content='记录'>
-              <Button type='primary' shape='circle' icon={<div className='r-ph-anchor-simple-thin' />}></Button>
+            <Tooltip content='评测记录'>
+              <Button
+                type='primary'
+                shape='circle'
+                icon={<div className='i-material-symbols:deployed-code-history-outline'></div>}
+                onClick={() => jumpToExam(item.id)}
+              ></Button>
             </Tooltip>
           </Col>
+          {/* <Col span={6}>
+            <Tooltip content='教学记录'>
+              <Button
+                type='primary'
+                shape='circle'
+                icon={<div className='i-material-symbols:deployed-code-history-outline'></div>}
+                onClick={() => jumpToExam(item.id)}
+              ></Button>
+            </Tooltip>
+          </Col> */}
           <Col span={6}>
             <Popconfirm
               focusLock
@@ -162,7 +171,7 @@ const UserList = () => {
                   type='primary'
                   shape='circle'
                   status='danger'
-                  icon={<div className='r-ph-anchor-simple-thin' />}
+                  icon={<div className='i-material-symbols:delete-rounded'></div>}
                 ></Button>
               </Tooltip>
             </Popconfirm>
@@ -203,7 +212,11 @@ const UserList = () => {
   const navigate = useNavigate();
 
   const jumpToDetail = (id: number) => {
-    navigate(`/evaluation/detail/${id}`);
+    navigate(`/user/detail/${id}`);
+  };
+
+  const jumpToExam = (id: number) => {
+    navigate(`/user/exam/${id}`);
   };
 
   const searchFormConfig: FormConfig = {
@@ -213,43 +226,41 @@ const UserList = () => {
     wrapperCol: { span: 16 },
     formItems: [
       {
-        formItemType: 'input',
-        label: '用户名称',
-        field: 'username',
-        placeholder: '请输入用户名称',
-        allowClear: true,
-        span: 12,
+        component: 'input',
+        formItemProps: {
+          label: '用户名称',
+          field: 'username',
+        },
+        componentProps: { placeholder: '请输入用户名称', allowClear: true },
       },
       {
-        formItemType: 'inputNumber',
-        label: '手机号',
-        field: 'mobile',
-        placeholder: '请输入手机号',
-        span: 12,
+        component: 'inputNumber',
+        formItemProps: { label: '手机号', field: 'mobile' },
+        componentProps: { placeholder: '请输入手机号' },
       },
       {
-        formItemType: 'checkbox',
-        label: '性别',
-        field: 'gender',
-        initialValue: [1, 2],
-        options: [
-          { label: '男', value: 1 },
-          { label: '女', value: 2 },
-        ],
+        component: 'checkbox',
+        formItemProps: { label: '性别', field: 'gender', initialValue: [1, 2] },
+        componentProps: {
+          options: [
+            { label: '男', value: 1 },
+            { label: '女', value: 2 },
+          ],
+        },
       },
     ],
     formButtons: [
       {
         name: '重置',
         htmlType: 'reset',
-        icon: <div className='r-ph-anchor-simple-thin' />,
+        icon: <div className='i-material-symbols:device-reset'></div>,
         onClick: handleReset,
       },
       {
         name: '查询',
         htmlType: 'button',
         type: 'primary',
-        icon: <div className='r-ph-anchor-simple-thin' />,
+        icon: <div className='i-material-symbols:search'></div>,
         onClick: handleSearch,
       },
     ],
@@ -265,12 +276,12 @@ const UserList = () => {
     }
   };
 
-  const handleSwitchStatus = async (item: User) => {
-    item.status = !item.status;
-    // setCurrentItem(item);
+  // const handleSwitchStatus = async (item: User) => {
+  //   item.status = !item.status;
+  //   // setCurrentItem(item);
 
-    await fetchOperate(2, item);
-  };
+  //   await fetchOperate(OperateModeEnum.Update, item);
+  // };
 
   const handleTableChange = (pagination: PaginationProps, sorter: SorterInfo | SorterInfo[]) => {
     // TODO: 后端做排序
@@ -315,7 +326,7 @@ const UserList = () => {
 
   const [visible, setVisible] = useState(false);
   const [currentItem, setCurrentItem] = useState<User | null>(null);
-  const [mode, setMode] = useState(1);
+  const [mode, setMode] = useState<OperateModeEnum>(OperateModeEnum.Create);
 
   const editorFormConfig: FormConfig = {
     autoComplete: 'off',
@@ -323,58 +334,40 @@ const UserList = () => {
     wrapperCol: { span: 18 },
     formItems: [
       {
-        formItemType: 'input',
-        label: '名用户称',
-        field: 'username',
-        placeholder: '请输入用户名称',
-        rules: [{ required: true, message: '请输入用户名称' }],
+        component: 'input',
+        formItemProps: { label: '名用户称', field: 'username', rules: [{ required: true, message: '请输入用户名称' }] },
+        componentProps: { placeholder: '请输入用户名称' },
       },
       {
-        formItemType: 'inputNumber',
-        label: '手机号',
-        field: 'mobile',
-        placeholder: '请输入手机号',
-        rules: [{ required: true, message: '请输入手机号' }],
+        component: 'inputNumber',
+        formItemProps: { label: '手机号', field: 'mobile', rules: [{ required: true, message: '请输入手机号' }] },
+        componentProps: { placeholder: '请输入手机号' },
       },
       {
-        formItemType: 'radio',
-        label: '性别',
-        field: 'gender',
-        initialValue: 1,
-        options: [
-          { label: '男', value: 1 },
-          { label: '女', value: 2 },
-        ],
+        component: 'radio',
+        formItemProps: { label: '性别', field: 'gender', initialValue: 1 },
+        componentProps: {
+          options: [
+            { label: '男', value: 1 },
+            { label: '女', value: 2 },
+          ],
+        },
       },
       {
-        formItemType: 'datePicker',
-        label: '生日',
-        field: 'birthday',
-        format: 'YYYY-MM-DD HH:mm:ss',
+        component: 'datePicker',
+        formItemProps: { label: '生日', field: 'birthday' },
+        componentProps: { format: 'YYYY-MM-DD HH:mm:ss' },
       },
       {
-        formItemType: 'switch',
-        label: '状态',
-        field: 'status',
-        initialValue: true,
-        triggerPropName: 'checked',
+        component: 'switch',
+        formItemProps: { label: '是否开启', field: 'status', initialValue: true, triggerPropName: 'checked' },
       },
-      // {
-      //   formItemType: 'input',
-      //   label: '说明',
-      //   field: 'describe',
-      // },
-      // {
-      //   formItemType: 'input',
-      //   label: '备注',
-      //   field: 'remark',
-      // },
     ],
   };
 
   const [EditorForm, editorFormRef] = useForm<User>(editorFormConfig);
 
-  const handleOpenModal = (mode: number, data?: User) => {
+  const handleOpenModal = (mode: OperateModeEnum, data?: User) => {
     setVisible(true);
     setMode(mode);
 
@@ -407,10 +400,10 @@ const UserList = () => {
   const handleDelete = async (data: User) => {
     setCurrentItem(data);
 
-    await fetchOperate(3, data);
+    await fetchOperate(OperateModeEnum.Delete, data);
   };
 
-  const fetchOperate = async (mode: number, data: User) => {
+  const fetchOperate = async (mode: OperateModeEnum, data: User) => {
     const params = {
       ...data,
       id: currentItem?.id ?? data.id,
@@ -420,15 +413,15 @@ const UserList = () => {
       msg = '';
 
     switch (mode) {
-      case 1:
+      case OperateModeEnum.Create:
         api = user.createUser;
         msg = '新增成功';
         break;
-      case 2:
+      case OperateModeEnum.Update:
         api = user.updateUser;
         msg = '更新成功';
         break;
-      case 3:
+      case OperateModeEnum.Delete:
         api = user.deleteUser;
         msg = '删除成功';
         break;
@@ -457,7 +450,7 @@ const UserList = () => {
   return (
     <section className='container'>
       <PageHeader
-        title='用户列表'
+        title='用户管理'
         breadcrumb={{
           routes: [
             {
@@ -466,7 +459,7 @@ const UserList = () => {
             },
             {
               path: 'user/list',
-              breadcrumbName: '用户列表',
+              breadcrumbName: '用户管理',
             },
           ],
         }}
@@ -483,11 +476,11 @@ const UserList = () => {
             <Button
               type='primary'
               htmlType='button'
-              icon={<div className='r-ph-anchor-simple-thin' />}
+              icon={<div className='i-material-symbols:add'></div>}
               style={{ width: '100%' }}
               onClick={() => handleOpenModal(1)}
             >
-              新建
+              新增
             </Button>
           }
         >
@@ -505,7 +498,7 @@ const UserList = () => {
         </Card>
       </section>
       <Modal
-        title={(mode === 1 ? '新增' : '编辑') + '用户'}
+        title={(mode === OperateModeEnum.Create ? '新增' : '编辑') + '用户'}
         visible={visible}
         autoFocus={false}
         focusLock={true}

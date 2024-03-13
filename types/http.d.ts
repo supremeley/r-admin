@@ -25,6 +25,10 @@ declare global {
     limit: number;
   }
 
+  interface OperateParams {
+    id: number;
+  }
+
   interface UploadFileParams {
     file: File | Blob;
   }

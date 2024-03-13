@@ -24,13 +24,9 @@ export const combinRoutes = (dynamicRoutes: RouteWithMetaObject[]) => {
   const rootRoute: RouteWithMetaObject = {
     id: 'Root',
     path: '/',
-    // TODO: loader => action => shouldRevalidate
-    // loader: () => {
-    //   const res = authProvider();
-    //   return res;
-    // },
     element: <Outlet />,
     children: [
+      // ...whiteList,
       {
         element: LazyLoadComponent(lazy(() => import('@/layout/index'))),
         children: [...dynamicRoutes],
@@ -38,6 +34,5 @@ export const combinRoutes = (dynamicRoutes: RouteWithMetaObject[]) => {
       ...errorList,
     ],
   };
-
-  return { whiteList, rootRoute, errorList };
+  return { whiteList, errorList, rootRoute };
 };
