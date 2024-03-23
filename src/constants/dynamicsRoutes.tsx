@@ -1,8 +1,17 @@
-import LazyLoadComponent from '@components/LazyLoadComponent';
+// import LazyLoadComponent from '@components/LazyLoadComponent';
 import { Outlet } from 'react-router-dom';
 
 import errorRoutes from '@/router/modules/errorList';
 import whiteRoutes from '@/router/modules/whiteList';
+import EvaluationDetail from '@/views/evaluation/detail/index';
+import EvaluationList from '@/views/evaluation/list/index';
+// import ExamDetail from '@/views/exam/detail/index';
+import ExamDetail from '@/views/exam/detail/index';
+import ExamList from '@/views/exam/list/index';
+import ManagerDetail from '@/views/manager/detail/index';
+import ManagerList from '@/views/manager/list/index';
+import UserDetail from '@/views/user/detail/index';
+import UserList from '@/views/user/list/index';
 
 export const dynamicsRoutes: RouteWithMetaObject[] = [
   // {
@@ -27,17 +36,16 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
     },
     children: [
       {
-        // id: 3,
         id: 'UserList',
         path: 'list',
         meta: {
           title: '用户管理',
           icon: 'i-material-symbols:data-table',
         },
-        element: LazyLoadComponent(lazy(() => import('@/views/user/list/index'))),
+        // element: LazyLoadComponent(lazy(() => import('@/views/user/list/index'))),
+        element: <UserList />,
       },
       {
-        // id: 7,
         id: 'UserDetail',
         path: 'detail/:id',
         meta: {
@@ -45,10 +53,10 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
           icon: 'i-material-symbols:data-table',
           hidden: true,
         },
-        element: LazyLoadComponent(lazy(() => import('@/views/user/detail/index'))),
+        // element: LazyLoadComponent(lazy(() => import('@/views/user/detail/index'))),
+        element: <UserDetail />,
       },
       {
-        // id: 4,
         id: 'UserExamRecord',
         path: 'exam/:id',
         meta: {
@@ -56,7 +64,8 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
           icon: 'i-material-symbols:data-table',
           hidden: true,
         },
-        element: LazyLoadComponent(lazy(() => import('@/views/exam/list/index'))),
+        // element: LazyLoadComponent(lazy(() => import('@/views/exam/list/index'))),
+        element: <ExamList />,
       },
       {
         // id: 4,
@@ -67,12 +76,12 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
           icon: 'i-material-symbols:data-table',
           hidden: true,
         },
-        element: LazyLoadComponent(lazy(() => import('@views/exam/detail/index'))),
+        // element: LazyLoadComponent(lazy(() => import('@views/exam/detail/index'))),
+        element: <ExamDetail />,
       },
     ],
   },
   {
-    // id: 4,
     id: 'Evaluation',
     path: 'evaluation',
     element: <Outlet />,
@@ -82,7 +91,6 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
     },
     children: [
       {
-        // id: 5,
         id: 'EvaluationList',
         path: 'list',
         params: { type: 1 },
@@ -90,10 +98,10 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
           title: '评测管理',
           icon: 'i-material-symbols:data-table',
         },
-        element: LazyLoadComponent(lazy(() => import('@/views/evaluation/list/index'))),
+        // element: LazyLoadComponent(lazy(() => import('@/views/evaluation/list/index'))),
+        element: <EvaluationList />,
       },
       {
-        // id: 6,
         id: 'CustomEvaluationList',
         path: 'list',
         params: { type: 2 },
@@ -101,22 +109,22 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
           title: '自定义评测',
           icon: 'i-material-symbols:inbox-customize-sharp',
         },
-        element: LazyLoadComponent(lazy(() => import('@/views/evaluation/list/index'))),
+        // element: LazyLoadComponent(lazy(() => import('@/views/evaluation/list/index'))),
+        element: <EvaluationList />,
       },
       {
-        // id: 7,
         id: 'EvaluationDetail',
         path: 'detail/:id',
         meta: {
           title: '评测详情',
           hidden: true,
         },
-        element: LazyLoadComponent(lazy(() => import('@/views/evaluation/detail/index'))),
+        // element: LazyLoadComponent(lazy(() => import('@/views/evaluation/detail/index'))),
+        element: <EvaluationDetail />,
       },
     ],
   },
   {
-    // id: 8,
     id: 'Manager',
     path: 'manager',
     element: <Outlet />,
@@ -126,29 +134,28 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
     },
     children: [
       {
-        // id: 9,
         id: 'ManagerList',
         path: 'list',
         meta: {
           title: '管理员列表',
           icon: 'i-material-symbols:data-table',
         },
-        element: LazyLoadComponent(lazy(() => import('@/views/manager/list/index'))),
+        // element: LazyLoadComponent(lazy(() => import('@/views/manager/detail/index'))),
+        element: <ManagerList />,
       },
       {
-        // id: 10,
         id: 'ManagerDetail',
         path: 'detail/:id',
         meta: {
           title: '管理员详情',
           hidden: true,
         },
-        element: LazyLoadComponent(lazy(() => import('@/views/manager/detail/index'))),
+        // element: LazyLoadComponent(lazy(() => import('@/views/manager/detail/index'))),
+        element: <ManagerDetail />,
       },
     ],
   },
   {
-    // id: 7,
     id: 'Exam',
     path: 'exam',
     meta: {
@@ -158,13 +165,10 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
     element: <Outlet />,
     children: [
       {
-        // id: 5,
         id: 'ExamDetail',
         path: 'detail/:id',
-        // meta: {
-        //   title: '用户评测详情',
-        // },
-        element: LazyLoadComponent(lazy(() => import('@views/exam/detail/index'))),
+        // element: LazyLoadComponent(lazy(() => import('@views/exam/detail/index'))),
+        element: <ExamDetail />,
       },
     ],
   },

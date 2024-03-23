@@ -1,12 +1,14 @@
+import { Evaluation } from '@/api/evaluation/interface';
 import type { TopicOption, TopicWithOption } from '@/api/topic/interface';
 
 export interface ExamTableModel {
   id: number;
+  evaluation: Evaluation;
   evaluationName: string;
   createTime: string;
   evaluationTypeText: string;
-  describe: string;
-  remark: string;
+  describe?: string;
+  remark?: string;
 }
 
 export interface UserAnswer {

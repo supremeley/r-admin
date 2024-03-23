@@ -70,11 +70,15 @@ export class AxiosRequest {
         console.log('response error', error);
         const { config, response } = error;
 
-        const { data } = response as AxiosResponse<ResponseData>;
+        const { data, status } = response as AxiosResponse<ResponseData>;
 
         const { code, message } = data;
 
         // TODO: Add response error hook
+
+        if (config!.responseType === ResponseType.Blob) {
+          return Promise.reject({ code: status, message });
+        }
 
         if (message) {
           return Promise.reject({ code, message });
@@ -143,11 +147,11 @@ export class AxiosRequest {
       case 401:
       case 511:
         Message.error({
-          content: message,
+          content: message || '登录信息失效，请重新登录',
           duration: 500,
           onClose: () => {
             // TODO:
-            window.location.hash = 'login';
+            window.location.href = '#/login';
           },
         });
         break;

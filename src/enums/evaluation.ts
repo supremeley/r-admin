@@ -5,9 +5,10 @@ export enum EvaluationTypeEnum {
 }
 
 export enum EvaluationTagEnum {
-  Tag = 1,
-  // Enable = 2,
-  // Enable = 3,
-  // Enable = 4,
-  // Enable = 5,
+  Develop = 1,
+  Motivation = 2,
+  Interest = 3,
+  Type = 4,
+  MBTI = 5,
+  Word = 6,
 }

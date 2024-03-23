@@ -53,7 +53,7 @@ export default defineConfig(({ command, mode }: ConfigEnv): UserConfig => {
     server: {
       host: '0.0.0.0', // 服务器主机名，如果允许外部访问，可设置为"0.0.0.0"
       port: Number(env.VITE_APP_PORT),
-      open: env.VITE_APP_OPEN_BROWSER,
+      // open: env.VITE_APP_OPEN_BROWSER,
       cors: true,
       // https: false,
       // 代理跨域（mock 不需要配置，这里只是个事列）

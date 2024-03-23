@@ -71,6 +71,19 @@ export function useForm<T = unknown>(formConfig: FormConfig): [() => JSX.Element
                         <Input {...(componentProps as InputProps)} />
                       </FormItem>
                     )}
+                    {/* {component === 'group' && (
+                      <FormItem {...formItemProps}>
+                        <Input.Group compact>
+                          {childrenItems?.map((childItem) => {
+                            return (
+                              <FormItem {...childItem.formItemProps}>
+                                <Input {...(childItem.componentProps as InputProps)} />
+                              </FormItem>
+                            );
+                          })}
+                        </Input.Group>
+                      </FormItem>
+                    )} */}
                     {component === 'inputNumber' && (
                       <FormItem {...formItemProps}>
                         <InputNumber {...(componentProps as InputNumberProps)} />

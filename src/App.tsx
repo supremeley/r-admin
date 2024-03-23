@@ -1,7 +1,6 @@
 import { ConfigProvider } from '@arco-design/web-react';
 import zhCN from '@arco-design/web-react/es/locale/zh-CN';
 import { Provider } from 'react-redux';
-import { Outlet } from 'react-router-dom';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 
@@ -19,7 +18,6 @@ const App = () => {
       <PersistGate loading={null} persistor={persistor}>
         <ConfigProvider locale={zhCN}>
           <RouterWithLayout></RouterWithLayout>
-          <Outlet />
         </ConfigProvider>
       </PersistGate>
     </Provider>

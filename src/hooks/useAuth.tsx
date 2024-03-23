@@ -51,7 +51,7 @@ export const useAuth = (): [
           // TODO:
           // redirect('/user/list');
           // navigate('/user/list', { replace: true });
-          window.location.href = '/user/list';
+          window.location.href = '#/user/list';
 
           const hour = new Date().getHours();
 

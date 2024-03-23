@@ -7,11 +7,14 @@ export interface Topic {
   sortNo: number;
   describe: string;
   remark: string;
-  maxLength: number;
   required: boolean;
+  maxLength: number;
+  rangeMin: number;
+  rangeMax: number;
   inputted: boolean;
   inputtedTopic: string;
   inputtedRemark: string;
+  inputtedCondition: string;
   id: number;
   evaluationId: number;
 }
@@ -20,6 +23,7 @@ export interface TopicGroup {
   name: string;
   status: boolean;
   sortNo: number;
+  disorder: boolean;
   describe: string;
   remark: string;
   id: number;

@@ -285,6 +285,16 @@ const EvaluationList = () => {
         },
       },
       {
+        component: 'radio',
+        formItemProps: { label: '模式', field: 'mode', initialValue: 1 },
+        componentProps: {
+          options: [
+            { label: '普通', value: 1 },
+            { label: '翻页', value: 2 },
+          ],
+        },
+      },
+      {
         component: 'textarea',
         formItemProps: {
           label: '说明',

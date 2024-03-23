@@ -8,6 +8,7 @@ export interface Evaluation {
   type: EvaluationTypeEnum;
   status: boolean;
   sortNo: number;
+  mode: number;
   describe: string;
   remark: string;
   id: number;

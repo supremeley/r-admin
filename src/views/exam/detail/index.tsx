@@ -38,11 +38,17 @@ const ExamDetail = () => {
 
           let userAnswer: undefined | string | UserAnswerOption[] = [];
 
-          if (topic.type === TopicTypeEnum.Input) {
+          if (topic.type === TopicTypeEnum.Input || topic.type === TopicTypeEnum.Score) {
             const examAnswer = examTopic?.answerList.find((answer) => !answer.topicInputted && !answer.optionInputted);
-
+            console.log(examAnswer);
             userAnswer = examAnswer?.remark;
-          } else {
+          }
+
+          if (
+            topic.type === TopicTypeEnum.Checkbox ||
+            topic.type === TopicTypeEnum.Radio ||
+            topic.type === TopicTypeEnum.Sort
+          ) {
             userAnswer = topic.topicOptionList!.map((option) => {
               const examAnswer = examTopic?.answerList.find((answer) => answer.topicOptionId === option.id);
 
@@ -110,12 +116,14 @@ const ExamDetail = () => {
       />
       <Spin block size={60} loading={loading}>
         <Card bordered={false} className='min-h-100vh'>
-          {topicList.map((topic: ExamTopicWithAnswer) => {
+          {topicList.map((topic: ExamTopicWithAnswer, index: number) => {
             return (
               <Card
                 title={
                   <div className='flex items-center '>
-                    <div className='white-break'>{topic.name}</div>
+                    <div className='white-break'>
+                      {index + 1}.{topic.name}
+                    </div>
                     <div className='ml-2 red'>({topicTypeMap[topic.type]})</div>
                     {topic.required && <div className='ml-2 color-red'>*</div>}
                   </div>
@@ -124,6 +132,7 @@ const ExamDetail = () => {
                 className='mt-4'
               >
                 {topic.type === TopicTypeEnum.Input && <div>{topic.userAnswer as string}</div>}
+                {topic.type === TopicTypeEnum.Score && <div>{topic.userAnswer as string}</div>}
                 {topic.type === TopicTypeEnum.Radio && (
                   <div>
                     {(topic.userAnswer as UserAnswerOption[]).map((option) => {
@@ -162,12 +171,6 @@ const ExamDetail = () => {
                     })}
                   </div>
                 )}
-                {topic.inputted && (
-                  <Space>
-                    <div className='font-500 mt-4'>{topic.inputtedTopic}</div>
-                    <div>{topic.inputtedRemark}</div>
-                  </Space>
-                )}
                 {topic.type === TopicTypeEnum.Sort &&
                   (topic.userAnswer as UserAnswerOption[]).map((option) => {
                     return (
@@ -181,6 +184,12 @@ const ExamDetail = () => {
                       </Row>
                     );
                   })}
+                {topic.inputted && (
+                  <Space className='mt-4'>
+                    <div className='font-500'>{topic.inputtedTopic}:</div>
+                    <div>{topic.inputtedRemark}</div>
+                  </Space>
+                )}
               </Card>
             );
           })}

@@ -1,4 +1,5 @@
-// export interface UploadFileResult {
-//   url: string;
-//   file: string;
-// }
+export interface DownloadFileParams {
+  id?: number;
+  userId?: number;
+  type: number;
+}

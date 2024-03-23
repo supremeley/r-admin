@@ -73,6 +73,7 @@ const EvaluationDetail = () => {
           {col === TopicTypeEnum.Checkbox && <Tag color='blue'>多选</Tag>}
           {col === TopicTypeEnum.Input && <Tag color='orange'>问答</Tag>}
           {col === TopicTypeEnum.Sort && <Tag color='green'>排序</Tag>}
+          {col === TopicTypeEnum.Score && <Tag color='lime'>打分</Tag>}
         </>
       ),
     },
@@ -156,7 +157,7 @@ const EvaluationDetail = () => {
     },
     {
       title: '题目',
-      width: 320,
+      width: 360,
       dataIndex: 'name',
     },
     {
@@ -166,7 +167,7 @@ const EvaluationDetail = () => {
     },
     {
       title: '题目组',
-      width: 320,
+      width: 360,
       dataIndex: 'topicGroup.name',
     },
     {
@@ -182,6 +183,7 @@ const EvaluationDetail = () => {
           {col === TopicTypeEnum.Checkbox && <Tag color='blue'>多选</Tag>}
           {col === TopicTypeEnum.Input && <Tag color='orange'>问答</Tag>}
           {col === TopicTypeEnum.Sort && <Tag color='green'>排序</Tag>}
+          {col === TopicTypeEnum.Score && <Tag color='lime'>打分</Tag>}
         </>
       ),
     },
@@ -385,6 +387,7 @@ const EvaluationDetail = () => {
             { label: '多选题', value: TopicTypeEnum.Checkbox },
             { label: '问答题', value: TopicTypeEnum.Input },
             { label: '排序题', value: TopicTypeEnum.Sort },
+            { label: '打分题', value: TopicTypeEnum.Score },
           ],
         },
       },
@@ -404,6 +407,56 @@ const EvaluationDetail = () => {
         },
       },
       {
+        component: 'inputNumber',
+        formItemProps: {
+          label: '最小分值',
+          field: 'rangeMin',
+          initialValue: 1,
+        },
+        watch: {
+          field: 'rangeMin',
+          depend: 'type',
+          condition: (value) => {
+            return value === 5;
+          },
+        },
+      },
+      {
+        component: 'inputNumber',
+        formItemProps: {
+          label: '最大分值',
+          field: 'rangeMax',
+          initialValue: 10,
+        },
+        watch: {
+          field: 'rangeMax',
+          depend: 'type',
+          condition: (value) => {
+            return value === 5;
+          },
+        },
+      },
+      // {
+      //   component: 'group',
+      //   formItemProps: {
+      //     label: '分值区间',
+      //   },
+      //   childrenItems: [
+      //     {
+      //       component: 'inputNumber',
+      //       formItemProps: {
+      //         field: 'rangeMin',
+      //       },
+      //     },
+      //     {
+      //       component: 'inputNumber',
+      //       formItemProps: {
+      //         field: 'rangeMax',
+      //       },
+      //     },
+      //   ],
+      // },
+      {
         component: 'switch',
         formItemProps: {
           label: '是否需要补充',
@@ -415,9 +468,20 @@ const EvaluationDetail = () => {
       {
         component: 'textarea',
         formItemProps: {
-          label: '补充问题',
+          label: '补充提问',
           field: 'inputtedTopic',
           initialValue: '',
+        },
+      },
+      {
+        component: 'textarea',
+        formItemProps: {
+          label: '补充提问条件',
+          field: 'inputtedCondition',
+          initialValue: '',
+        },
+        componentProps: {
+          placeholder: '示例：>= 5, 符号与数字间请保留空格',
         },
       },
     ],
@@ -445,7 +509,7 @@ const EvaluationDetail = () => {
 
     if (currentTab === 'topicGroup') {
       if (data) {
-        setCurrentGroup(data);
+        setCurrentGroup(data as TopicGroup);
         editorGroupFormInstance.setFieldsValue(data);
       } else {
         setCurrentGroup(null);
@@ -622,6 +686,15 @@ const EvaluationDetail = () => {
           label: '是否显示题目组序号',
           field: 'showGroupIndex',
           initialValue: true,
+          triggerPropName: 'checked',
+        },
+      },
+      {
+        component: 'switch',
+        formItemProps: {
+          label: '是否打乱选项',
+          field: 'disorder',
+          initialValue: false,
           triggerPropName: 'checked',
         },
       },
@@ -891,7 +964,7 @@ const EvaluationDetail = () => {
         {currentTab === 'topic' && (
           <>
             <EditorForm />
-            {type !== 3 && (
+            {(type == TopicTypeEnum.Radio || type == TopicTypeEnum.Checkbox || type == TopicTypeEnum.Sort) && (
               <Form
                 form={formInstance}
                 labelCol={{ span: 6 }}
@@ -899,8 +972,8 @@ const EvaluationDetail = () => {
                 autoComplete='off'
                 initialValues={{
                   topicOptionList: [
-                    { name: '符合' },
-                    { name: '不符合' },
+                    // { name: '符合' },
+                    // { name: '不符合' },
                     // { name: '1' },
                     // { name: '2' },
                     // { name: '3' },

@@ -12,6 +12,10 @@ import type {
   UploadProps,
 } from '@arco-design/web-react';
 
+interface FormGroupProps extends FormItemConfig {
+  childrenItems: FormItemConfig[];
+}
+
 interface ComponentProps {
   input: InputProps;
   inputNumber: InputNumberProps;
@@ -21,6 +25,7 @@ interface ComponentProps {
   checkbox: CheckboxGroupProps<string | number>;
   datePicker: DatePickerProps;
   uploadPhoto: UploadProps;
+  group: FormGroupProps;
 }
 
 export interface FormItemConfig {

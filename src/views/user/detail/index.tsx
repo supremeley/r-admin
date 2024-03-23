@@ -1,13 +1,13 @@
 import './index.scss';
 
-import { Card, Descriptions, PageHeader, Spin } from '@arco-design/web-react';
+import { Button, Card, Descriptions, PageHeader, Spin, Tooltip } from '@arco-design/web-react';
 import type { DataType } from '@arco-design/web-react/es/Descriptions/interface';
+import dayjs from 'dayjs';
 import type { ReactNode } from 'react';
 
-import { manager } from '@/api';
-// import type { Manager } from '@/api/manager/interface';
+import { file, manager } from '@/api';
 import { adminTypeMap, genderMap } from '@/constants';
-import { ResultEnum } from '@/enums';
+import { EvaluationTagEnum, ResultEnum } from '@/enums';
 
 type Desc = Record<
   string,
@@ -34,7 +34,7 @@ const detailDescMap: Desc = {
 };
 
 const ManagerDetail = () => {
-  const { id } = useParams();
+  const { id: userId } = useParams();
 
   const [loading, setLoading] = useState(false);
   // const [detail, setDetail] = useState<Manager | null>(null);
@@ -48,7 +48,7 @@ const ManagerDetail = () => {
     setLoading(true);
 
     const params = {
-      id: Number(id!),
+      id: Number(userId!),
     };
 
     try {
@@ -68,6 +68,48 @@ const ManagerDetail = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleExport = async (tag: EvaluationTagEnum) => {
+    const data = await file.fileDownload({ type: tag, userId: +userId! });
+
+    let start = '';
+    let suffix = '.xlsx';
+
+    switch (tag) {
+      case EvaluationTagEnum.Develop:
+        start = '职业发展诊断';
+        suffix = '.pptx';
+        break;
+      case EvaluationTagEnum.Motivation:
+        start = '职业动机测评';
+        break;
+      case EvaluationTagEnum.Interest:
+        start = '职业兴趣测评';
+        break;
+      case EvaluationTagEnum.Type:
+        start = '职业类型测评';
+        break;
+      case EvaluationTagEnum.Develop:
+        start = 'MBTI';
+        break;
+      case EvaluationTagEnum.Word:
+        start = '职业定位测评报告';
+        suffix = '.docx';
+        break;
+      default:
+        break;
+    }
+
+    const filename = start + dayjs().format('YYYY-MM-DD') + suffix;
+    const a = document.createElement('a');
+    const url = window.URL.createObjectURL(data);
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
   };
 
   return (
@@ -109,6 +151,30 @@ const ManagerDetail = () => {
               xxl: 4,
             }}
           />
+        </Card>
+        <Card title='相关报告' className='mt-4'>
+          <div>
+            <Tooltip content='导出'>
+              <Button
+                type='primary'
+                icon={<div className='i-material-symbols:cloud-download mr-2'></div>}
+                onClick={() => handleExport(EvaluationTagEnum.Develop)}
+              >
+                职业发展诊断
+              </Button>
+            </Tooltip>
+          </div>
+          <div className='mt-4'>
+            <Tooltip content='导出'>
+              <Button
+                type='primary'
+                icon={<div className='i-material-symbols:cloud-download mr-2'></div>}
+                onClick={() => handleExport(EvaluationTagEnum.Word)}
+              >
+                职业定位测评报告
+              </Button>
+            </Tooltip>
+          </div>
         </Card>
       </Spin>
     </section>

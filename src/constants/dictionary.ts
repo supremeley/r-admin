@@ -28,4 +28,5 @@ export const topicTypeMap: Recordable = {
   2: '多选题',
   3: '问答题',
   4: '排序题',
+  5: '打分题',
 };

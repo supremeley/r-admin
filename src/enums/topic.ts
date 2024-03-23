@@ -3,4 +3,5 @@ export enum TopicTypeEnum {
   Checkbox = 2,
   Input = 3,
   Sort = 4,
+  Score = 5,
 }

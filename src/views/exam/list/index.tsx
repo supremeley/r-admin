@@ -2,13 +2,13 @@ import './index.scss';
 
 import type { PaginationProps, TableColumnProps } from '@arco-design/web-react';
 import { Button, Card, Grid, PageHeader, Table, Tooltip } from '@arco-design/web-react';
-import type { SorterInfo } from '@arco-design/web-react/es/Table/interface';
+// import type { SorterInfo } from '@arco-design/web-react/es/Table/interface';
 import dayjs from 'dayjs';
 
 import { exam, file } from '@/api';
 import type { ExamFilter } from '@/api/exam/interface';
 import { evaluationTagMap, evaluationTypeMap } from '@/constants';
-import { EvaluationTypeEnum, ResultEnum } from '@/enums';
+import { EvaluationTagEnum, EvaluationTypeEnum, ResultEnum } from '@/enums';
 import { useForm } from '@/hooks';
 import type { FormConfig } from '@/hooks/useForm/interface';
 
@@ -25,7 +25,7 @@ const ExamList = () => {
     },
     {
       title: '评测日期',
-      width: 120,
+      width: 180,
       dataIndex: 'createTime',
       // sorter: {
       //   compare: (a: ExamTableModel, b: ExamTableModel) => a.createTime - b.createTime,
@@ -35,28 +35,17 @@ const ExamList = () => {
       title: '评测类型',
       width: 120,
       dataIndex: 'evaluationTypeText',
-      // sorter: {
-      //   compare: (a: ExamTableModel, b: ExamTableModel) => a.createTime - b.createTime,
-      // },
     },
     // {
-    //   title: '评测日期',
-    //   width: 120,
-    //   dataIndex: 'createTime',
-    //   // sorter: {
-    //   //   compare: (a: ExamTableModel, b: ExamTableModel) => a.createTime - b.createTime,
-    //   // },
+    //   title: '说明',
+    //   width: 240,
+    //   dataIndex: 'describe',
     // },
-    {
-      title: '说明',
-      width: 240,
-      dataIndex: 'describe',
-    },
-    {
-      title: '备注',
-      width: 240,
-      dataIndex: 'remark',
-    },
+    // {
+    //   title: '备注',
+    //   width: 240,
+    //   dataIndex: 'remark',
+    // },
     {
       title: '操作',
       width: 120,
@@ -64,16 +53,6 @@ const ExamList = () => {
       dataIndex: 'operation',
       render: (_, item) => (
         <Row gutter={6}>
-          {/* <Col span={6}>
-            <Tooltip content='编辑'>
-              <Button
-                type='primary'
-                shape='circle'
-                icon={<div class="i-material-symbols:add"></div>}
-                onClick={() => handleOpenModal(2, item)}
-              ></Button>
-            </Tooltip>
-          </Col> */}
           <Col span={12}>
             <Tooltip content='详情'>
               <Button
@@ -90,7 +69,7 @@ const ExamList = () => {
                 type='primary'
                 shape='circle'
                 icon={<div className='i-material-symbols:cloud-download'></div>}
-                onClick={() => handleExport(item.id)}
+                onClick={() => handleExport(item)}
               ></Button>
             </Tooltip>
           </Col>
@@ -215,9 +194,9 @@ const ExamList = () => {
   //   await fetchOperate(2, item);
   // };
 
-  const handleTableChange = (pagination: PaginationProps, sorter: SorterInfo | SorterInfo[]) => {
+  const handleTableChange = (pagination: PaginationProps) => {
     // TODO: 后端做排序
-    console.log(pagination, sorter);
+    // console.log(pagination, sorter);
     const { current, pageSize } = pagination;
 
     if (current !== page || pageSize !== limit) {
@@ -230,7 +209,7 @@ const ExamList = () => {
     setLoading(true);
 
     const params = {
-      userId: userId,
+      userId,
       page,
       limit,
     };
@@ -249,12 +228,13 @@ const ExamList = () => {
               : evaluationTagMap[item.evaluation.tag];
 
           return {
+            evaluationTypeText,
             id: item.id,
             evaluationName: item.evaluation.name,
             createTime: item.createTime,
-            evaluationTypeText,
-            describe: '', // item.describe,
-            remark: '', // item.remark,
+            evaluation: item.evaluation,
+            // describe: '',
+            // remark: '',
           };
         });
 
@@ -383,11 +363,40 @@ const ExamList = () => {
   // }
   // };
 
-  const handleExport = async (id: number) => {
-    const data = await file.fileDownload({ id });
-    console.log(data);
+  const handleExport = async (item: ExamTableModel) => {
+    const {
+      id,
+      evaluation: { name, tag },
+    } = item;
 
-    const filename = dayjs().format('YYYY-MM-DD') + '职业发展诊断.pptx';
+    const data = await file.fileDownload({ id, userId: +userId!, type: tag });
+
+    let start = '';
+    let suffix = '.xlsx';
+
+    switch (tag) {
+      case EvaluationTagEnum.Develop:
+        start = '职业发展诊断';
+        suffix = '.pptx';
+        break;
+      case EvaluationTagEnum.Motivation:
+        start = '职业动机测评';
+        break;
+      case EvaluationTagEnum.Interest:
+        start = '职业兴趣测评';
+        break;
+      case EvaluationTagEnum.Type:
+        start = '职业类型测评';
+        break;
+      case EvaluationTagEnum.Develop:
+        start = 'MBTI';
+        break;
+      default:
+        start = name;
+        break;
+    }
+
+    const filename = start + dayjs().format('YYYY-MM-DD') + suffix;
     const a = document.createElement('a');
     const url = window.URL.createObjectURL(data);
     a.href = url;
