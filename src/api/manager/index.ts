@@ -6,6 +6,7 @@ import type {
   ManagerDetailParams,
   ManagerListParams,
   ManagerListResult,
+  ManagerRecordListResult,
   OperateManagerResult,
 } from './interface';
 
@@ -15,6 +16,7 @@ enum Api {
   CreateManager = '/admin/create',
   UpdateManager = '/admin/update',
   DeleteManager = '/admin/delete',
+  ManagerRecord = '/admin/record',
 }
 
 export const getManagerList = (params: ManagerListParams) => {
@@ -35,4 +37,8 @@ export const updateManager = (params: OperateManagerResult) => {
 
 export const deleteManager = (params: OperateManagerResult) => {
   return useAxios.delete<SuccessResponse<OperateManagerResult>>({ url: Api.DeleteManager, params });
+};
+
+export const getManagerRecord = (params: ListParams) => {
+  return useAxios.get<SuccessResponse<ManagerRecordListResult>>({ url: Api.ManagerRecord, params });
 };

@@ -74,18 +74,15 @@ export class AxiosRequest {
 
         const { code, message } = data;
 
+        const msg = message || '请求异常:' + JSON.stringify({ url: config?.url, code, message });
+
         // TODO: Add response error hook
 
-        if (config!.responseType === ResponseType.Blob) {
-          return Promise.reject({ code: status, message });
-        }
-
-        if (message) {
-          return Promise.reject({ code, message });
-        }
+        const statusCode = config!.responseType === ResponseType.Blob ? status : code;
 
         return Promise.reject({
-          message: '请求异常:' + JSON.stringify({ url: config?.url, code, message }),
+          code: statusCode,
+          message: msg,
         });
       },
     );
@@ -147,12 +144,18 @@ export class AxiosRequest {
       case 401:
       case 511:
         Message.error({
-          content: message || '登录信息失效，请重新登录',
+          content: '登录信息失效，请重新登录',
           duration: 500,
           onClose: () => {
             // TODO:
             window.location.href = '#/login';
           },
+        });
+        break;
+      case 412:
+        Message.error({
+          content: '用户未完成对应评测',
+          duration: 1000,
         });
         break;
       default:

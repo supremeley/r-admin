@@ -217,7 +217,7 @@ const ExamList = () => {
     // filter && (params = { ...params, ...filter });
 
     try {
-      const { code, result } = await exam.getExamRecordByUser(params);
+      const { code, result } = await exam.getExamRecord(params);
 
       if (code === ResultEnum.SUCCESS) {
         // const { list, total } = result;
@@ -369,7 +369,7 @@ const ExamList = () => {
       evaluation: { name, tag },
     } = item;
 
-    const data = await file.fileDownload({ id, userId: +userId!, type: tag });
+    const data = await file.fileDownload({ id, userId: +userId!, tag });
 
     let start = '';
     let suffix = '.xlsx';
@@ -439,7 +439,14 @@ const ExamList = () => {
             loading={loading}
             scroll={{ x: true }}
             border={{ bodyCell: false }}
-            pagination={{ total, showTotal: true, showJumper: true, sizeCanChange: true }}
+            pagination={{
+              total,
+              current: page,
+              pageSize: limit,
+              showTotal: true,
+              showJumper: true,
+              sizeCanChange: true,
+            }}
             pagePosition='bottomCenter'
             rowKey='id'
             onChange={handleTableChange}

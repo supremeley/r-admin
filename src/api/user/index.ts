@@ -38,6 +38,6 @@ export const deleteUser = (params: OperateUserResult) => {
   return useAxios.delete<SuccessResponse<OperateUserResult>>({ url: Api.DeleteUser, params });
 };
 
-export const getExamRecordByUser = (params: UserDetailParams) => {
-  return useAxios.get<SuccessResponse<User>>({ url: Api.ExamRecordByUser, params });
-};
+// export const getExamRecordByUser = (params: UserDetailParams) => {
+//   return useAxios.get<SuccessResponse<User>>({ url: Api.ExamRecordByUser, params });
+// };

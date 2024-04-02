@@ -1,13 +1,14 @@
 // import LazyLoadComponent from '@components/LazyLoadComponent';
+import ManagerRecord from '@views/manager/record';
 import { Outlet } from 'react-router-dom';
 
 import errorRoutes from '@/router/modules/errorList';
 import whiteRoutes from '@/router/modules/whiteList';
 import EvaluationDetail from '@/views/evaluation/detail/index';
 import EvaluationList from '@/views/evaluation/list/index';
-// import ExamDetail from '@/views/exam/detail/index';
 import ExamDetail from '@/views/exam/detail/index';
 import ExamList from '@/views/exam/list/index';
+import ExamRecord from '@/views/exam/record/index';
 import ManagerDetail from '@/views/manager/detail/index';
 import ManagerList from '@/views/manager/list/index';
 import UserDetail from '@/views/user/detail/index';
@@ -153,6 +154,16 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
         // element: LazyLoadComponent(lazy(() => import('@/views/manager/detail/index'))),
         element: <ManagerDetail />,
       },
+      {
+        id: 'ManagerRecord',
+        path: 'record/:id',
+        meta: {
+          title: '管理员操作记录',
+          hidden: true,
+        },
+        // element: LazyLoadComponent(lazy(() => import('@/views/manager/detail/index'))),
+        element: <ManagerRecord />,
+      },
     ],
   },
   {
@@ -169,6 +180,12 @@ export const dynamicsRoutes: RouteWithMetaObject[] = [
         path: 'detail/:id',
         // element: LazyLoadComponent(lazy(() => import('@views/exam/detail/index'))),
         element: <ExamDetail />,
+      },
+      {
+        id: 'ExamRecord',
+        path: 'record/:id',
+        // element: LazyLoadComponent(lazy(() => import('@views/exam/detail/index'))),
+        element: <ExamRecord />,
       },
     ],
   },

@@ -12,7 +12,7 @@ export const getExamDetail = (params: DetailParams) => {
   return useAxios.get<SuccessResponse<ExamDetailResult>>({ url: Api.ExamDetail, params });
 };
 
-export const getExamRecordByUser = (params: ListParams) => {
+export const getExamRecord = (params: ListParams) => {
   return useAxios.get<SuccessResponse<ExamListResult>>({ url: Api.ExamRecordByUser, params });
 };
 

@@ -71,7 +71,7 @@ const ManagerDetail = () => {
   };
 
   const handleExport = async (tag: EvaluationTagEnum) => {
-    const data = await file.fileDownload({ type: tag, userId: +userId! });
+    const data = await file.fileDownload({ userId: +userId!, tag });
 
     let start = '';
     let suffix = '.xlsx';

@@ -145,6 +145,7 @@ const ManagerList = () => {
                 type='primary'
                 shape='circle'
                 icon={<div className='i-material-symbols:deployed-code-history-outline'></div>}
+                onClick={() => jumpToRecord(item.id)}
               ></Button>
             </Tooltip>
           </Col>
@@ -179,6 +180,10 @@ const ManagerList = () => {
 
   const jumpToDetail = (id: number) => {
     navigate(`/manager/detail/${id}`);
+  };
+
+  const jumpToRecord = (id: number) => {
+    navigate(`/manager/record/${id}`);
   };
 
   const [page, setPage] = useState<number>(1);
@@ -535,7 +540,14 @@ const ManagerList = () => {
             loading={loading}
             scroll={{ x: true }}
             border={{ bodyCell: false }}
-            pagination={{ total, showTotal: true, showJumper: true, sizeCanChange: true }}
+            pagination={{
+              total,
+              current: page,
+              pageSize: limit,
+              showTotal: true,
+              showJumper: true,
+              sizeCanChange: true,
+            }}
             pagePosition='bottomCenter'
             rowKey='id'
             onChange={handleTableChange}

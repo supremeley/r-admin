@@ -1,10 +1,9 @@
 import './index.scss';
 
-import type { FormInstance, TableColumnProps } from '@arco-design/web-react';
+import type { FormInstance, PaginationProps, TableColumnProps } from '@arco-design/web-react';
 import {
   Button,
   Card,
-  // Descriptions,
   Form,
   Grid,
   Input,
@@ -15,19 +14,20 @@ import {
   Popconfirm,
   Space,
   Switch,
-  // Switch,
   Table,
   Tabs,
   Tag,
   Tooltip,
 } from '@arco-design/web-react';
+import type { SorterInfo } from '@arco-design/web-react/es/Table/interface';
 
-import { evaluation, topic } from '@/api';
+import { topic } from '@/api';
 import type {
   OperateGroup,
   OperateTopic,
   OperateTopicWithOption,
   Topic,
+  // TopicFilter,
   TopicGroup,
   TopicGroupWithTopic,
   TopicWithOption,
@@ -36,9 +36,16 @@ import { OperateModeEnum, ResultEnum, TopicTypeEnum } from '@/enums';
 import { useForm } from '@/hooks';
 import type { FormConfig } from '@/hooks/useForm/interface';
 
+import RelatedModal from '../components/relatedModal';
+
 const Row = Grid.Row;
 const Col = Grid.Col;
 const TabPane = Tabs.TabPane;
+
+enum TabEnum {
+  Topic = 'topic',
+  Group = 'group',
+}
 
 const EvaluationDetail = () => {
   const columns: TableColumnProps<Topic>[] = [
@@ -52,13 +59,8 @@ const EvaluationDetail = () => {
     },
     {
       title: '题目',
-      width: 320,
+      width: 360,
       dataIndex: 'name',
-    },
-    {
-      title: '说明',
-      width: 280,
-      dataIndex: 'describe',
     },
     {
       title: '类型',
@@ -81,6 +83,11 @@ const EvaluationDetail = () => {
       title: '题目组',
       width: 320,
       dataIndex: 'topicGroup.name',
+    },
+    {
+      title: '说明',
+      width: 200,
+      dataIndex: 'describe',
     },
     // {
     //   title: '状态',
@@ -146,49 +153,6 @@ const EvaluationDetail = () => {
     },
   ];
 
-  const relatedColumns: TableColumnProps<Topic>[] = [
-    {
-      title: '序号',
-      width: 80,
-      dataIndex: 'sortNo',
-      sorter: {
-        compare: (a: Topic, b: Topic) => a.sortNo - b.sortNo,
-      },
-    },
-    {
-      title: '题目',
-      width: 360,
-      dataIndex: 'name',
-    },
-    {
-      title: '说明',
-      width: 280,
-      dataIndex: 'describe',
-    },
-    {
-      title: '题目组',
-      width: 360,
-      dataIndex: 'topicGroup.name',
-    },
-    {
-      title: '类型',
-      width: 120,
-      dataIndex: 'type',
-      sorter: {
-        compare: (a: Topic, b: Topic) => a.type - b.type,
-      },
-      render: (col) => (
-        <>
-          {col === TopicTypeEnum.Radio && <Tag color='red'>单选</Tag>}
-          {col === TopicTypeEnum.Checkbox && <Tag color='blue'>多选</Tag>}
-          {col === TopicTypeEnum.Input && <Tag color='orange'>问答</Tag>}
-          {col === TopicTypeEnum.Sort && <Tag color='green'>排序</Tag>}
-          {col === TopicTypeEnum.Score && <Tag color='lime'>打分</Tag>}
-        </>
-      ),
-    },
-  ];
-
   const groupColumns: TableColumnProps<TopicGroupWithTopic>[] = [
     {
       title: '序号',
@@ -199,13 +163,13 @@ const EvaluationDetail = () => {
       },
     },
     {
-      title: '题目组名',
-      width: 280,
+      title: '题目组',
+      width: 360,
       dataIndex: 'name',
     },
     {
       title: '题目组说明',
-      width: 280,
+      width: 200,
       dataIndex: 'describe',
     },
     // {
@@ -284,27 +248,73 @@ const EvaluationDetail = () => {
 
   const { id: evaluationId } = useParams();
 
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
   const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState<number>(0);
   const [list, setList] = useState<Topic[]>([]);
-  const [groupList, setGroupList] = useState<TopicGroupWithTopic[]>([]);
+  const [groupList, setGroupList] = useState<TopicGroup[]>([]);
+  // const [filter, setFilter] = useState<TopicFilter | null>(null);
+  const [currentTab, setCurrentTab] = useState(TabEnum.Topic);
 
   useEffect(() => {
-    void fetchData();
-  }, []);
+    void fetchData(page, limit);
+  }, [page, limit]);
 
-  const fetchData = async () => {
+  useEffect(() => {
+    reloadData();
+  }, [currentTab]);
+
+  const handleTableChange = (pagination: PaginationProps, sorter: SorterInfo | SorterInfo[]) => {
+    // TODO: 后端做排序
+    console.log(pagination, sorter);
+
+    const { current, pageSize } = pagination;
+
+    if (current !== page || pageSize !== limit) {
+      setPage(current ?? 1);
+      setLimit(pageSize ?? 10);
+    }
+  };
+
+  const handleTabChange = (tabPage: string) => {
+    setCurrentTab(tabPage as TabEnum);
+  };
+
+  const reloadData = () => {
+    if (page === 1) {
+      void fetchData(page, limit);
+    } else {
+      setPage(1);
+    }
+  };
+
+  const fetchData = async (page: number, limit: number) => {
     setLoading(true);
 
     const params = {
-      id: Number(evaluationId!),
+      page,
+      limit,
+      evaluationId: +evaluationId!,
     };
 
     try {
-      const { code, result } = await evaluation.getEvaluationDetail(params);
+      if (currentTab === TabEnum.Topic) {
+        const { code, result } = await topic.getTopicList(params);
 
-      if (code === ResultEnum.SUCCESS) {
-        setList(result.topicList || []);
-        setGroupList(result.topicGroupList || []);
+        if (code === ResultEnum.SUCCESS) {
+          setList(result.list);
+          setTotal(result.total);
+        }
+      }
+
+      if (currentTab === TabEnum.Group) {
+        const { code, result } = await topic.getTopicGroupList(params);
+
+        if (code === ResultEnum.SUCCESS) {
+          setGroupList(result.list);
+          setTotal(result.total);
+        }
       }
 
       setLoading(false);
@@ -314,15 +324,9 @@ const EvaluationDetail = () => {
   };
 
   const [visible, setVisible] = useState(false);
-  const [currentItem, setCurrentItem] = useState<TopicWithOption | null>(null);
   const [mode, setMode] = useState<OperateModeEnum>(OperateModeEnum.Create);
-
-  const [currentTab, setCurrentTab] = useState('topic');
+  const [currentItem, setCurrentItem] = useState<TopicWithOption | null>(null);
   const [currentGroup, setCurrentGroup] = useState<TopicGroup | null>(null);
-
-  const handleTabChange = (tabPage: string) => {
-    setCurrentTab(tabPage);
-  };
 
   const editorFormConfig: FormConfig = {
     autoComplete: 'off',
@@ -334,7 +338,7 @@ const EvaluationDetail = () => {
         formItemProps: {
           label: '题目',
           field: 'name',
-          rules: [{ required: true, message: '请输入题目' }],
+          // rules: [{ required: true, message: '请输入题目' }],
         },
         componentProps: {
           placeholder: '请输入题目',
@@ -495,7 +499,7 @@ const EvaluationDetail = () => {
     setVisible(true);
     setMode(mode);
 
-    if (currentTab === 'topic') {
+    if (currentTab === TabEnum.Topic) {
       if (data) {
         setCurrentItem(data as Topic);
         editorFormInstance.setFieldsValue(data);
@@ -507,7 +511,7 @@ const EvaluationDetail = () => {
       }
     }
 
-    if (currentTab === 'topicGroup') {
+    if (currentTab === TabEnum.Group) {
       if (data) {
         setCurrentGroup(data as TopicGroup);
         editorGroupFormInstance.setFieldsValue(data);
@@ -525,7 +529,7 @@ const EvaluationDetail = () => {
   const handleCreateOrUpdate = async () => {
     let instance: FormInstance = editorFormInstance as FormInstance;
 
-    if (currentTab === 'topicGroup') {
+    if (currentTab === TabEnum.Group) {
       instance = editorGroupFormInstance as FormInstance;
     }
 
@@ -533,7 +537,7 @@ const EvaluationDetail = () => {
       try {
         const res: OperateTopic = await instance.validate();
 
-        if (currentTab === 'topic') {
+        if (currentTab === TabEnum.Topic) {
           const optionRes: OperateTopicWithOption = await formInstance.validate();
 
           console.log(res, optionRes);
@@ -541,7 +545,7 @@ const EvaluationDetail = () => {
           await fetchOperate(mode, { ...res, ...optionRes });
         }
 
-        if (currentTab === 'topicGroup') {
+        if (currentTab === TabEnum.Group) {
           await fetchGroupOperate(mode, { ...res });
         }
       } catch (_) {
@@ -558,9 +562,9 @@ const EvaluationDetail = () => {
   };
 
   const fetchOperate = async (mode: OperateModeEnum, data: OperateTopicWithOption) => {
-    let params = {
+    const params = {
       ...data,
-      evaluationId: Number(evaluationId),
+      evaluationId: +evaluationId!,
     };
 
     if (currentItem?.id ?? data.id) {
@@ -573,10 +577,6 @@ const EvaluationDetail = () => {
     switch (mode) {
       case OperateModeEnum.Create:
         api = topic.createTopic;
-        params = {
-          ...data,
-          evaluationId: Number(evaluationId),
-        };
         msg = '新增成功';
         break;
       case OperateModeEnum.Update:
@@ -596,7 +596,9 @@ const EvaluationDetail = () => {
       const { code, message } = await api(params);
 
       if (code === ResultEnum.SUCCESS) {
-        void fetchData();
+        // void fetchData();
+
+        reloadData();
 
         handleCloseModal();
 
@@ -626,7 +628,8 @@ const EvaluationDetail = () => {
       const { code } = await topic.deleteTopicOption(params);
 
       if (code === ResultEnum.SUCCESS) {
-        void fetchData();
+        // void fetchData();
+        reloadData();
 
         const current = currentItem;
 
@@ -653,18 +656,18 @@ const EvaluationDetail = () => {
       {
         component: 'textarea',
         formItemProps: {
-          label: '题目组名',
+          label: '题目组',
           field: 'name',
-          rules: [{ required: true, message: '请输入题目组名' }],
+          // rules: [{ required: true, message: '请输入题目组' }],
         },
         componentProps: {
-          placeholder: '请输入题目组名',
+          placeholder: '请输入题目组',
         },
       },
       {
         component: 'textarea',
         formItemProps: {
-          label: '说明',
+          label: '题目组说明',
           field: 'describe',
         },
         componentProps: {
@@ -711,7 +714,7 @@ const EvaluationDetail = () => {
         formItemProps: {
           label: '题目组序号',
           field: 'sortNo',
-          initialValue: groupList.length + 1,
+          initialValue: list.length + 1,
         },
         componentProps: {
           placeholder: '请输入题目组序号',
@@ -722,23 +725,6 @@ const EvaluationDetail = () => {
 
   const [GroupEditorForm, editorGroupFormInstance] = useForm<OperateGroup>(editorGroupFormConfig);
 
-  // const handleGroupCreateOrUpdate = async () => {
-  //   if (editorGroupFormInstance) {
-  //     try {
-  //       const res: OperateTopic = await editorGroupFormInstance.validate();
-
-  //       // const optionRes: OperateTopicWithOption = await formInstance.validate();
-
-  //       // console.log(res);
-
-  //       await fetchGroupOperate(mode, { ...res });
-  //     } catch (_) {
-  //       console.log(editorGroupFormInstance.getFieldsError());
-  //       // Message.error('校验失败，请检查字段！');
-  //     }
-  //   }
-  // };
-
   const handleGroupDelete = async (data: TopicGroup) => {
     setCurrentGroup(data);
 
@@ -746,9 +732,9 @@ const EvaluationDetail = () => {
   };
 
   const fetchGroupOperate = async (mode: OperateModeEnum, data: OperateGroup) => {
-    let params = {
+    const params = {
       ...data,
-      evaluationId: Number(evaluationId),
+      evaluationId: +evaluationId!,
     };
 
     if (currentGroup?.id ?? data.id) {
@@ -761,10 +747,6 @@ const EvaluationDetail = () => {
     switch (mode) {
       case OperateModeEnum.Create:
         api = topic.createTopicGroup;
-        params = {
-          ...data,
-          evaluationId: Number(evaluationId),
-        };
         msg = '新增成功';
         break;
       case OperateModeEnum.Update:
@@ -784,7 +766,8 @@ const EvaluationDetail = () => {
       const { code, message } = await api(params);
 
       if (code === ResultEnum.SUCCESS) {
-        void fetchData();
+        // void fetchData();
+        reloadData();
 
         handleCloseModal();
 
@@ -805,60 +788,14 @@ const EvaluationDetail = () => {
     setRelatedVisible(true);
 
     setCurrentGroup(data);
-
-    const topicListIds = data.topicList?.map((item) => item.id);
+    console.log(data);
+    const topicListIds = data.topicList.map((item) => item.id);
 
     setSelectedRowKeys(topicListIds);
-    // setMode(mode);
-
-    // if (currentTab === 'topic') {
-    //   if (data) {
-    //     setCurrentItem(data as Topic);
-    //     editorFormInstance.setFieldsValue(data);
-    //     formInstance.setFieldsValue(data);
-    //   } else {
-    //     setCurrentItem(null);
-    //     editorFormInstance.resetFields();
-    //     formInstance.resetFields();
-    //   }
-    // }
-
-    // if (currentTab === 'topicGroup') {
-    //   if (data) {
-    //     setCurrentGroup(data);
-    //     editorGroupFormInstance.setFieldsValue(data);
-    //   } else {
-    //     setCurrentGroup(null);
-    //     editorGroupFormInstance.resetFields();
-    //   }
-    // }
   };
 
   const handleCloseRelatedModal = () => {
     setRelatedVisible(false);
-    // setMode(mode);
-
-    // if (currentTab === 'topic') {
-    //   if (data) {
-    //     setCurrentItem(data as Topic);
-    //     editorFormInstance.setFieldsValue(data);
-    //     formInstance.setFieldsValue(data);
-    //   } else {
-    //     setCurrentItem(null);
-    //     editorFormInstance.resetFields();
-    //     formInstance.resetFields();
-    //   }
-    // }
-
-    // if (currentTab === 'topicGroup') {
-    //   if (data) {
-    //     setCurrentGroup(data);
-    //     editorGroupFormInstance.setFieldsValue(data);
-    //   } else {
-    //     setCurrentGroup(null);
-    //     editorGroupFormInstance.resetFields();
-    //   }
-    // }
   };
 
   const handleRelated = async () => {
@@ -871,7 +808,8 @@ const EvaluationDetail = () => {
       const { code, message } = await topic.relatedTopicWithGroup(params);
 
       if (code === ResultEnum.SUCCESS) {
-        void fetchData();
+        // void fetchData();
+        reloadData();
 
         handleCloseRelatedModal();
 
@@ -922,27 +860,42 @@ const EvaluationDetail = () => {
             </Button>
           }
         >
-          <Tabs defaultActiveTab='topic' onChange={handleTabChange}>
-            <TabPane key='topic' title='题目'>
+          <Tabs defaultActiveTab={TabEnum.Topic} onChange={handleTabChange} className='mb-4'>
+            <TabPane key={TabEnum.Topic} title='题目'>
               <Table
                 columns={columns}
                 data={list}
                 loading={loading}
                 scroll={{ x: true }}
                 border={{ bodyCell: false }}
-                pagination={false}
+                pagination={{
+                  total,
+                  current: page,
+                  pageSize: limit,
+                  showTotal: true,
+                  showJumper: true,
+                  sizeCanChange: true,
+                }}
                 pagePosition='bottomCenter'
                 rowKey='id'
+                onChange={handleTableChange}
               />
             </TabPane>
-            <TabPane key='topicGroup' title='题目组'>
+            <TabPane key={TabEnum.Group} title='题目组'>
               <Table
                 columns={groupColumns}
                 data={groupList}
                 loading={loading}
                 scroll={{ x: true }}
                 border={{ bodyCell: false }}
-                pagination={false}
+                pagination={{
+                  total,
+                  current: page,
+                  pageSize: limit,
+                  showTotal: true,
+                  showJumper: true,
+                  sizeCanChange: true,
+                }}
                 pagePosition='bottomCenter'
                 rowKey='id'
               />
@@ -960,8 +913,8 @@ const EvaluationDetail = () => {
         onOk={handleCreateOrUpdate}
         onCancel={handleCloseModal}
       >
-        {currentTab === 'topicGroup' && <GroupEditorForm />}
-        {currentTab === 'topic' && (
+        {currentTab === TabEnum.Group && <GroupEditorForm />}
+        {currentTab === TabEnum.Topic && (
           <>
             <EditorForm />
             {(type == TopicTypeEnum.Radio || type == TopicTypeEnum.Checkbox || type == TopicTypeEnum.Sort) && (
@@ -970,32 +923,34 @@ const EvaluationDetail = () => {
                 labelCol={{ span: 6 }}
                 wrapperCol={{ span: 18 }}
                 autoComplete='off'
-                initialValues={{
-                  topicOptionList: [
-                    // { name: '符合' },
-                    // { name: '不符合' },
-                    // { name: '1' },
-                    // { name: '2' },
-                    // { name: '3' },
-                    // { name: '4' },
-                    // { name: '5' },
-                    // { name: '6' },
-                    // { name: '7' },
-                    // { name: '从不' },
-                    // { name: '偶尔' },
-                    // { name: '有时' },
-                    // { name: '经常' },
-                    // { name: '频繁' },
-                    // { name: '总是' },
-                    // { name: '几乎不了解' },
-                    // { name: '很不了解' },
-                    // { name: '有一点了解' },
-                    // { name: '比较了解' },
-                    // { name: '十分了解' },
-                    // { name: '愿意' },
-                    // { name: '不愿意' },
-                  ],
-                }}
+                // initialValues={{
+                //   topicOptionList: [
+                //     { name: '' },
+                //     { name: '' },
+                // { name: '符合' },
+                // { name: '不符合' },
+                // { name: '1' },
+                // { name: '2' },
+                // { name: '3' },
+                // { name: '4' },
+                // { name: '5' },
+                // { name: '6' },
+                // { name: '7' },
+                // { name: '从不' },
+                // { name: '偶尔' },
+                // { name: '有时' },
+                // { name: '经常' },
+                // { name: '频繁' },
+                // { name: '总是' },
+                // { name: '几乎不了解' },
+                // { name: '很不了解' },
+                // { name: '有一点了解' },
+                // { name: '比较了解' },
+                // { name: '十分了解' },
+                // { name: '愿意' },
+                // { name: '不愿意' },
+                //   ],
+                // }}
               >
                 <Form.List field='topicOptionList'>
                   {(fields, { add, remove }) => {
@@ -1068,44 +1023,14 @@ const EvaluationDetail = () => {
           </>
         )}
       </Modal>
-      <Modal
-        title='关联题目'
+      <RelatedModal
         visible={relatedVisible}
-        autoFocus={false}
-        focusLock={true}
-        mountOnEnter={false}
-        className='custom-modal'
-        onOk={handleRelated}
-        onCancel={handleCloseRelatedModal}
-      >
-        <Table
-          columns={relatedColumns}
-          data={list}
-          loading={loading}
-          scroll={{ x: true }}
-          border={{ bodyCell: false }}
-          pagination={false}
-          pagePosition='bottomCenter'
-          rowKey='id'
-          rowSelection={{
-            type: 'checkbox',
-            fixed: true,
-            selectedRowKeys,
-            onChange: (selectedRowKeys, selectedRows) => {
-              console.log('onChange:', selectedRowKeys, selectedRows);
-              setSelectedRowKeys(selectedRowKeys as number[]);
-            },
-            onSelect: (selected, record, selectedRows) => {
-              console.log('onSelect:', selected, record, selectedRows);
-            },
-            // checkboxProps: (record) => {
-            //   return {
-            //     disabled: record.id === '4',
-            //   };
-            // },
-          }}
-        />
-      </Modal>
+        evaluationId={+evaluationId!}
+        selectedRowKeys={selectedRowKeys}
+        handleOk={handleRelated}
+        handleClose={handleCloseRelatedModal}
+        handleSelectedRowKeys={setSelectedRowKeys}
+      />
     </section>
   );
 };

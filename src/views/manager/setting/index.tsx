@@ -10,36 +10,35 @@ import {
   Modal,
   PageHeader,
   Popconfirm,
-  // Switch,
+  Switch,
   Table,
+  Tag,
   Tooltip,
 } from '@arco-design/web-react';
 import type { SorterInfo } from '@arco-design/web-react/es/Table/interface';
-import dayjs from 'dayjs';
 
-import { user } from '@/api';
-import type { User, UserFilter } from '@/api/user/interface';
-import { GenderEnum, OperateModeEnum, ResultEnum } from '@/enums';
+import { manager } from '@/api';
+import type { EditorManager, Manager, ManagerFilter, OperateManagerResult } from '@/api/manager/interface';
+import { GenderEnum, ManagerTypeEnum, OperateModeEnum, ResultEnum } from '@/enums';
 import { useForm } from '@/hooks';
 import type { FormConfig } from '@/hooks/useForm/interface';
 
-import type { UserTableModel } from '../interface';
+const Row = Grid.Row;
+const Col = Grid.Col;
 
-const { Row, Col } = Grid;
-
-const UserList = () => {
-  const columns: TableColumnProps<UserTableModel>[] = [
+const ManagerList = () => {
+  const columns: TableColumnProps<Manager>[] = [
     {
       title: 'ID',
       width: 80,
       dataIndex: 'id',
       sorter: {
-        compare: (a: UserTableModel, b: UserTableModel) => a.id - b.id,
+        compare: (a: Manager, b: Manager) => a.id - b.id,
       },
     },
     {
       title: '名称',
-      width: 120,
+      width: 240,
       dataIndex: 'username',
     },
     {
@@ -57,7 +56,7 @@ const UserList = () => {
       width: 180,
       dataIndex: 'mobile',
       sorter: {
-        compare: (a: UserTableModel, b: UserTableModel) => a.mobile - b.mobile,
+        compare: (a: Manager, b: Manager) => a.mobile - b.mobile,
       },
     },
     {
@@ -65,7 +64,7 @@ const UserList = () => {
       width: 120,
       dataIndex: 'gender',
       sorter: {
-        compare: (a: UserTableModel, b: UserTableModel) => a.gender - b.gender,
+        compare: (a: Manager, b: Manager) => a.gender - b.gender,
       },
       render: (col) => (
         <>
@@ -75,28 +74,34 @@ const UserList = () => {
       ),
     },
     {
-      title: '年龄',
-      width: 120,
-      dataIndex: 'age',
+      title: '类型',
+      width: 180,
+      dataIndex: 'type',
       sorter: {
-        compare: (a: UserTableModel, b: UserTableModel) => (a.age ?? 0) - (b.age ?? 0),
+        compare: (a: Manager, b: Manager) => a.type - b.type,
       },
+      render: (col) => (
+        <>
+          {col === ManagerTypeEnum.System && <Tag color='red'>高级管理员</Tag>}
+          {col === ManagerTypeEnum.General && <Tag color='orangered'>普通管理员</Tag>}
+        </>
+      ),
     },
-    // {
-    //   title: '状态',
-    //   width: 120,
-    //   dataIndex: 'status',
-    //   sorter: {
-    //     compare: (a: UserTableModel) => (a.status ? 1 : -1),
-    //   },
-    //   render: (col, item) => (
-    //     <Switch
-    //       checked={col}
-    //       checkedIcon={<div className='i-material-symbols:check'></div>}
-    //       onChange={() => handleSwitchStatus(item)}
-    //     />
-    //   ),
-    // },
+    {
+      title: '状态',
+      width: 120,
+      dataIndex: 'status',
+      sorter: {
+        compare: (a: Manager) => (a.status ? 1 : -1),
+      },
+      render: (col, item) => (
+        <Switch
+          checked={col}
+          checkedIcon={<div className='i-material-symbols:check'></div>}
+          onChange={() => handleSwitchStatus(item)}
+        />
+      ),
+    },
     {
       title: '说明',
       width: 240,
@@ -135,25 +140,14 @@ const UserList = () => {
             </Tooltip>
           </Col>
           <Col span={6}>
-            <Tooltip content='评测记录'>
+            <Tooltip content='操作记录'>
               <Button
                 type='primary'
                 shape='circle'
                 icon={<div className='i-material-symbols:deployed-code-history-outline'></div>}
-                onClick={() => jumpToExam(item.id)}
               ></Button>
             </Tooltip>
           </Col>
-          {/* <Col span={6}>
-            <Tooltip content='教学记录'>
-              <Button
-                type='primary'
-                shape='circle'
-                icon={<div className='i-material-symbols:deployed-code-history-outline'></div>}
-                onClick={() => jumpToExam(item.id)}
-              ></Button>
-            </Tooltip>
-          </Col> */}
           <Col span={6}>
             <Popconfirm
               focusLock
@@ -181,27 +175,34 @@ const UserList = () => {
     },
   ];
 
+  const navigate = useNavigate();
+
+  const jumpToDetail = (id: number) => {
+    navigate(`/manager/detail/${id}`);
+  };
+
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const [loading, setLoading] = useState(false);
-  const [list, setList] = useState<UserTableModel[]>([]);
+  const [list, setList] = useState<Manager[]>([]);
   const [total, setTotal] = useState<number>(0);
-  const [filter, setFilter] = useState<UserFilter | null>(null);
+  const [filter, setFilter] = useState<ManagerFilter | null>(null);
 
   useEffect(() => {
     void fetchData(page, limit);
   }, [page, limit, filter]);
 
   const handleReset = () => {
-    searchFormRef?.resetFields();
+    searchFormRef.resetFields();
   };
 
   const handleSearch = async () => {
     if (searchFormRef) {
       try {
         const res = await searchFormRef.validate();
+
         setFilter(res);
-        // setPage(1);
+        setPage(1);
       } catch (_) {
         console.log(searchFormRef.getFieldsError());
         // Message.error('校验失败，请检查字段！');
@@ -209,34 +210,29 @@ const UserList = () => {
     }
   };
 
-  const navigate = useNavigate();
-
-  const jumpToDetail = (id: number) => {
-    navigate(`/user/detail/${id}`);
-  };
-
-  const jumpToExam = (id: number) => {
-    navigate(`/user/exam/${id}`);
-  };
-
   const searchFormConfig: FormConfig = {
     layout: 'inline',
     autoComplete: 'off',
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 },
+    // initialValues: {
+    //   name: '',
+    //   mobile: '',
+    //   gender: [1, 2],
+    //   type: [1, 2],
+    //   status: [0, 1],
+    // },
     formItems: [
       {
         component: 'input',
-        formItemProps: {
-          label: '用户名称',
-          field: 'username',
+        formItemProps: { label: '管理员名称', field: 'username' },
+        componentProps: {
+          placeholder: '请输入管理员名称',
+          allowClear: true,
         },
-        componentProps: { placeholder: '请输入用户名称', allowClear: true },
       },
       {
-        component: 'inputNumber',
+        component: 'input',
         formItemProps: { label: '手机号', field: 'mobile' },
-        componentProps: { placeholder: '请输入手机号' },
+        componentProps: { placeholder: '请输入手机号', allowClear: true },
       },
       {
         component: 'checkbox',
@@ -245,6 +241,26 @@ const UserList = () => {
           options: [
             { label: '男', value: 1 },
             { label: '女', value: 2 },
+          ],
+        },
+      },
+      {
+        component: 'checkbox',
+        formItemProps: { label: '类型', field: 'type', initialValue: [1, 2] },
+        componentProps: {
+          options: [
+            { label: '高级', value: 1 },
+            { label: '普通', value: 2 },
+          ],
+        },
+      },
+      {
+        component: 'checkbox',
+        formItemProps: { label: '状态', field: 'status', initialValue: [1, 0] },
+        componentProps: {
+          options: [
+            { label: '启用', value: 1 },
+            { label: '禁用', value: 0 },
           ],
         },
       },
@@ -266,7 +282,7 @@ const UserList = () => {
     ],
   };
 
-  const [SearchForm, searchFormRef] = useForm<UserFilter>(searchFormConfig);
+  const [SearchForm, searchFormRef] = useForm<ManagerFilter>(searchFormConfig);
 
   const reloadData = () => {
     if (page === 1) {
@@ -276,16 +292,17 @@ const UserList = () => {
     }
   };
 
-  // const handleSwitchStatus = async (item: User) => {
-  //   item.status = !item.status;
-  //   // setCurrentItem(item);
+  const handleSwitchStatus = async (item: Manager) => {
+    item.status = !item.status;
+    // setCurrentItem(item);
 
-  //   await fetchOperate(OperateModeEnum.Update, item);
-  // };
+    await fetchOperate(OperateModeEnum.Update, item);
+  };
 
   const handleTableChange = (pagination: PaginationProps, sorter: SorterInfo | SorterInfo[]) => {
     // TODO: 后端做排序
     console.log(pagination, sorter);
+
     const { current, pageSize } = pagination;
 
     if (current !== page || pageSize !== limit) {
@@ -305,17 +322,10 @@ const UserList = () => {
     filter && (params = { ...params, ...filter });
 
     try {
-      const { code, result } = await user.getUserList(params);
+      const { code, result } = await manager.getManagerList(params);
 
       if (code === ResultEnum.SUCCESS) {
-        const list: UserTableModel[] = result.list.map((item) => {
-          return {
-            ...item,
-            age: item.birthday ? dayjs().diff(dayjs(item.birthday), 'year') + 1 : null,
-          };
-        });
-
-        setList(list);
+        setList(result.list);
         setTotal(result.total);
         setLoading(false);
       }
@@ -325,7 +335,7 @@ const UserList = () => {
   };
 
   const [visible, setVisible] = useState(false);
-  const [currentItem, setCurrentItem] = useState<User | null>(null);
+  const [currentItem, setCurrentItem] = useState<Manager | null>(null);
   const [mode, setMode] = useState<OperateModeEnum>(OperateModeEnum.Create);
 
   const editorFormConfig: FormConfig = {
@@ -334,9 +344,18 @@ const UserList = () => {
     wrapperCol: { span: 18 },
     formItems: [
       {
+        component: 'uploadPhoto',
+        formItemProps: { label: '上传头像', field: 'avatar', triggerPropName: 'fileList' },
+        componentProps: { listType: 'picture-card', accept: '.jpg, .jpeg, .png', limit: 1 },
+      },
+      {
         component: 'input',
-        formItemProps: { label: '名用户称', field: 'username', rules: [{ required: true, message: '请输入用户名称' }] },
-        componentProps: { placeholder: '请输入用户名称' },
+        formItemProps: {
+          label: '管理员名称',
+          field: 'username',
+          rules: [{ required: true, message: '请输入管理员名称' }],
+        },
+        componentProps: { placeholder: '请输入管理员名称' },
       },
       {
         component: 'inputNumber',
@@ -354,26 +373,45 @@ const UserList = () => {
         },
       },
       {
-        component: 'datePicker',
-        formItemProps: { label: '生日', field: 'birthday' },
-        componentProps: { format: 'YYYY-MM-DD HH:mm:ss' },
+        component: 'radio',
+        formItemProps: { label: '类型', field: 'type', initialValue: 1 },
+        componentProps: {
+          options: [
+            { label: '高级管理员', value: 1 },
+            { label: '普通管理员', value: 2 },
+          ],
+        },
       },
       {
         component: 'switch',
         formItemProps: { label: '是否开启', field: 'status', initialValue: true, triggerPropName: 'checked' },
       },
+      {
+        component: 'textarea',
+        formItemProps: { label: '说明', field: 'describe' },
+        componentProps: { autoSize: { minRows: 2 } },
+      },
+      {
+        component: 'textarea',
+        formItemProps: { label: '备注', field: 'remark' },
+        componentProps: { autoSize: { minRows: 2 } },
+      },
     ],
   };
 
-  const [EditorForm, editorFormRef] = useForm<User>(editorFormConfig);
+  const [EditorForm, editorFormRef] = useForm<EditorManager>(editorFormConfig);
 
-  const handleOpenModal = (mode: OperateModeEnum, data?: User) => {
+  const handleOpenModal = (mode: OperateModeEnum, data?: Manager) => {
     setVisible(true);
     setMode(mode);
 
     if (data) {
       setCurrentItem(data);
-      editorFormRef.setFieldsValue(data);
+
+      editorFormRef.setFieldsValue({
+        ...data,
+        avatar: data.avatar ? [{ uid: '-1', url: data.avatar, name: data.avatar }] : undefined,
+      });
     } else {
       setCurrentItem(null);
       editorFormRef.resetFields();
@@ -389,7 +427,11 @@ const UserList = () => {
       try {
         const res = await editorFormRef.validate();
 
-        await fetchOperate(mode, res);
+        const avatar = res.avatar ? (res.avatar.at(-1)?.response as UploadFileResult)?.url : '';
+
+        const params = { ...res, avatar };
+
+        await fetchOperate(mode, params);
       } catch (_) {
         console.log(editorFormRef.getFieldsError());
         // Message.error('校验失败，请检查字段！');
@@ -397,16 +439,17 @@ const UserList = () => {
     }
   };
 
-  const handleDelete = async (data: User) => {
-    setCurrentItem(data);
+  const handleDelete = async (data: Manager) => {
+    // setCurrentItem(data);
 
     await fetchOperate(OperateModeEnum.Delete, data);
   };
 
-  const fetchOperate = async (mode: OperateModeEnum, data: User) => {
-    const params = {
+  const fetchOperate = async (mode: OperateModeEnum, data: Manager) => {
+    let params: OperateManagerResult = {
       ...data,
-      id: currentItem?.id ?? data.id,
+      id: data.id ?? currentItem?.id,
+      // avatar: data.avatar,
     };
 
     let api,
@@ -414,19 +457,20 @@ const UserList = () => {
 
     switch (mode) {
       case OperateModeEnum.Create:
-        api = user.createUser;
+        api = manager.createManager;
         msg = '新增成功';
         break;
       case OperateModeEnum.Update:
-        api = user.updateUser;
+        api = manager.updateManager;
         msg = '更新成功';
         break;
       case OperateModeEnum.Delete:
-        api = user.deleteUser;
+        api = manager.deleteManager;
+        params = { id: data.id };
         msg = '删除成功';
         break;
       default:
-        api = user.createUser;
+        api = manager.createManager;
         break;
     }
 
@@ -450,16 +494,16 @@ const UserList = () => {
   return (
     <section className='container'>
       <PageHeader
-        title='用户管理'
+        title='管理员列表'
         breadcrumb={{
           routes: [
             {
-              path: 'user',
-              breadcrumbName: '用户',
+              path: 'manager',
+              breadcrumbName: '管理员',
             },
             {
-              path: 'user/list',
-              breadcrumbName: '用户管理',
+              path: 'manager/list',
+              breadcrumbName: '管理员列表',
             },
           ],
         }}
@@ -469,7 +513,7 @@ const UserList = () => {
       </Card>
       <section className='mt-4'>
         <Card
-          title='用户列表'
+          title='管理员列表'
           bordered={false}
           headerStyle={{ textAlign: 'left' }}
           extra={
@@ -485,19 +529,13 @@ const UserList = () => {
           }
         >
           <Table
+            tableLayoutFixed
             columns={columns}
             data={list}
             loading={loading}
             scroll={{ x: true }}
             border={{ bodyCell: false }}
-            pagination={{
-              total,
-              current: page,
-              pageSize: limit,
-              showTotal: true,
-              showJumper: true,
-              sizeCanChange: true,
-            }}
+            pagination={{ total, showTotal: true, showJumper: true, sizeCanChange: true }}
             pagePosition='bottomCenter'
             rowKey='id'
             onChange={handleTableChange}
@@ -505,7 +543,7 @@ const UserList = () => {
         </Card>
       </section>
       <Modal
-        title={(mode === OperateModeEnum.Create ? '新增' : '编辑') + '用户'}
+        title={(mode === OperateModeEnum.Create ? '新增' : '编辑') + '管理员'}
         visible={visible}
         autoFocus={false}
         focusLock={true}
@@ -519,4 +557,4 @@ const UserList = () => {
   );
 };
 
-export default UserList;
+export default ManagerList;

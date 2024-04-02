@@ -11,7 +11,7 @@ import type { ExamTopicWithAnswer, UserAnswerOption } from '../interface';
 const { Row, Col } = Grid;
 
 const ExamDetail = () => {
-  const { id: userId } = useParams();
+  const { id: userId } = useParams<string>();
 
   useEffect(() => {
     void fetchData();
@@ -30,17 +30,19 @@ const ExamDetail = () => {
       const { code, result } = await exam.getExamDetail({ id: Number(userId) });
 
       if (code === ResultEnum.SUCCESS) {
-        const { evaluation, examTopicList } = result;
-        const { topicList } = evaluation;
+        const { examTopicList } = result;
+        // const { topicList } = evaluation;
 
-        const list = topicList.map((topic) => {
-          const examTopic = examTopicList.find((i) => i.topicId === topic.id);
+        const list: ExamTopicWithAnswer[] = examTopicList.map((topic) => {
+          // const examTopic = examTopicList.find((i) => i.topicId === topic.id);
 
           let userAnswer: undefined | string | UserAnswerOption[] = [];
 
           if (topic.type === TopicTypeEnum.Input || topic.type === TopicTypeEnum.Score) {
-            const examAnswer = examTopic?.answerList.find((answer) => !answer.topicInputted && !answer.optionInputted);
-            console.log(examAnswer);
+            const examAnswer = topic.answerList.find(
+              (answer) => !answer.optionInputted && !answer.topicInputted && !answer.optionInputted,
+            );
+            // console.log(examAnswer);
             userAnswer = examAnswer?.remark;
           }
 
@@ -49,25 +51,43 @@ const ExamDetail = () => {
             topic.type === TopicTypeEnum.Radio ||
             topic.type === TopicTypeEnum.Sort
           ) {
-            userAnswer = topic.topicOptionList!.map((option) => {
-              const examAnswer = examTopic?.answerList.find((answer) => answer.topicOptionId === option.id);
+            userAnswer = topic.answerList.filter((answer) => !answer.topicInputted && !answer.optionInputted);
+            // .map(answer => {
+            //   return {
+            //     ...answer,
 
-              return {
-                ...option,
-                selected: !!examAnswer,
-                remark: examAnswer?.remark,
-                // selected: answer.selected,
-              };
-            });
+            //   }
+            // });
+            // .map((option) => {
+            //   const examAnswer = examTopic?.answerList.find((answer) => answer.topicOptionId === option.id);
+
+            //   return {
+            //     ...option,
+            //     selected: !!examAnswer,
+            //     remark: examAnswer?.remark,
+            //     // selected: answer.selected,
+            //   };
+            // });
+            console.log(userAnswer);
           }
 
-          if (topic.inputted) {
-            const examAnswer = examTopic?.answerList.find((answer) => answer.topicInputted);
-            topic.inputtedRemark = examAnswer?.remark ?? '';
+          const answerInputted = topic.answerList.find((answer) => answer.topicInputted && answer.remark)?.remark;
+
+          let inputted = false,
+            inputtedTopic = '',
+            inputtedRemark = '';
+
+          if (answerInputted) {
+            inputted = true;
+            inputtedTopic = topic.topic.inputtedTopic;
+            inputtedRemark = answerInputted;
           }
 
           return {
             ...topic,
+            inputted,
+            inputtedTopic,
+            inputtedRemark,
             userAnswer,
           };
         });
@@ -116,7 +136,7 @@ const ExamDetail = () => {
       />
       <Spin block size={60} loading={loading}>
         <Card bordered={false} className='min-h-100vh'>
-          {topicList.map((topic: ExamTopicWithAnswer, index: number) => {
+          {topicList.map((topic, index: number) => {
             return (
               <Card
                 title={

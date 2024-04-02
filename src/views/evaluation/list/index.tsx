@@ -98,6 +98,7 @@ const EvaluationList = () => {
                 type='primary'
                 shape='circle'
                 icon={<div className='i-material-symbols:deployed-code-history-outline'></div>}
+                onClick={() => jumpToRecord(item.id)}
               ></Button>
             </Tooltip>
           </Col>
@@ -180,6 +181,10 @@ const EvaluationList = () => {
     navigate(`/evaluation/detail/${id}`);
   };
 
+  const jumpToRecord = (id: number) => {
+    navigate(`/exam/record/${id}`);
+  };
+
   const searchFormConfig: FormConfig = {
     layout: 'inline',
     autoComplete: 'off',
@@ -257,8 +262,8 @@ const EvaluationList = () => {
       if (code === ResultEnum.SUCCESS) {
         setList(result.list);
         setTotal(result.total);
-        setLoading(false);
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -410,7 +415,7 @@ const EvaluationList = () => {
             },
             {
               path: 'evaluation/list',
-              breadcrumbName: '评测列表',
+              breadcrumbName: '评测管理',
             },
           ],
         }}
@@ -441,7 +446,14 @@ const EvaluationList = () => {
             loading={loading}
             scroll={{ x: true }}
             border={{ bodyCell: false }}
-            pagination={{ total, showTotal: true, showJumper: true, sizeCanChange: true }}
+            pagination={{
+              total,
+              current: page,
+              pageSize: limit,
+              showTotal: true,
+              showJumper: true,
+              sizeCanChange: true,
+            }}
             pagePosition='bottomCenter'
             rowKey='id'
             onChange={handleTableChange}

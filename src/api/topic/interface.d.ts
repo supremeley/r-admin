@@ -19,6 +19,19 @@ export interface Topic {
   evaluationId: number;
 }
 
+export interface TopicFilter {
+  evaluationId?: number;
+  // name: string;
+}
+
+export type TopicListParams = ListParams & Partial<TopicFilter>;
+
+export type TopicListResult = ListResult<Topic>;
+
+export type TopicGroupListParams = TopicListParams;
+
+export type TopicGroupListResult = ListResult<TopicGroupWithTopic>;
+
 export interface TopicGroup {
   name: string;
   status: boolean;
@@ -28,6 +41,7 @@ export interface TopicGroup {
   remark: string;
   id: number;
   evaluationId: number;
+  topicList: Topic[];
 }
 
 export type TopicGroupWithTopic = TopicGroup & {

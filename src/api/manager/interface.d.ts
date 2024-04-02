@@ -35,3 +35,16 @@ export interface ManagerFilter {
   type: number;
   status: boolean;
 }
+
+export interface ManagerRecord {
+  adminId: number;
+  createTime: string;
+  id: number;
+  ip: string;
+  method: string;
+  request: string;
+  result: string;
+  updateTime: string;
+}
+
+export type ManagerRecordListResult = ListResult<ManagerRecord>;
